@@ -13,7 +13,7 @@ import {
 import manageChannelStore from "../store/manageChannelStore";
 
 const ManageChannel = () => {
-  const { myChannel, updateChannel } = manageChannelStore();
+  const { myChannel, updateChannel, getChannelVideos } = manageChannelStore();
   const navigate = useNavigate();
 
   const [channelName, setChannelName] = useState("");
@@ -22,6 +22,7 @@ const ManageChannel = () => {
   const [channelBanner, setChannelBanner] = useState(null);
   const [existingLogo, setExistingLogo] = useState("");
   const [existingBanner, setExistingBanner] = useState("");
+  const [videos, setVideos] = useState([]);
 
   // ✅ Fetch current channel data
   useEffect(() => {
@@ -32,10 +33,14 @@ const ManageChannel = () => {
         setChannelDesc(data.channel.desc);
         setExistingLogo(data.channel.logoUrl);
         setExistingBanner(data.channel.bannerUrl);
+
+        // Fetch channel videos
+        const channelVideos = await getChannelVideos(data.channel._id);
+        setVideos(channelVideos || []);
       }
     };
     fetchData();
-  }, [myChannel]);
+  }, [myChannel, getChannelVideos]);
 
   // ✅ Handle update
   const handleUpdateChannel = async (e) => {
@@ -59,7 +64,7 @@ const ManageChannel = () => {
   };
 
   return (
-    <Box className="flex justify-center items-center py-10 px-4 bg-black min-h-screen">
+    <Box className="flex flex-col items-center py-10 px-4  bg-black min-h-screen">
       <Card
         sx={{
           maxWidth: 700,
@@ -106,7 +111,6 @@ const ManageChannel = () => {
             </Box>
           )}
 
-          {/* Hover overlay */}
           <Box className="overlay absolute inset-0 flex items-center justify-center bg-black/50 text-white transition-opacity opacity-0">
             <Camera size={40} />
           </Box>
@@ -154,7 +158,6 @@ const ManageChannel = () => {
                 {!channelLogo && !existingLogo && <Image size={32} />}
               </Avatar>
 
-              {/* Hover overlay */}
               <Box className="overlay absolute inset-0 flex items-center justify-center bg-black/50 text-white transition-opacity opacity-0">
                 <Camera size={28} />
               </Box>
@@ -196,8 +199,7 @@ const ManageChannel = () => {
                 },
               }}
             />
-            <br />
-            <br />
+
             {/* Channel Description */}
             <TextField
               fullWidth
@@ -241,6 +243,55 @@ const ManageChannel = () => {
               Update Channel
             </Button>
           </form>
+
+          {/* 🔹 Videos Grid */}
+          <Box className="mt-8">
+            <Typography variant="h6" className="text-white mb-4 font-semibold">
+              Your Videos
+            </Typography>
+
+            {videos.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {videos.map((video) => (
+                  <div
+                    key={video._id}
+                    className="bg-gray-900 overflow-hidden group cursor-pointer hover:shadow-red-500/40 transition w-full"
+                    onClick={() => navigate(`/video/${video._id}`)}
+                  >
+                    {/* Thumbnail */}
+                    <div className="relative w-full h-48 sm:h-60 lg:h-48">
+                      <img
+                        src={video.thumbnailUrl}
+                        alt={video.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <video
+                        src={video.videoUrl}
+                        className="absolute top-0 left-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        muted
+                        loop
+                        autoPlay
+                      />
+                    </div>
+
+                    {/* Video Info */}
+                    <div className="p-3">
+                      <h3 className="font-bold text-sm sm:text-base truncate text-gray-200 group-hover:text-white transition">
+                        {video.title}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
+                        {video.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Typography className="text-gray-500 text-center">
+                No videos uploaded yet.
+              </Typography>
+            )}
+          </Box>
         </CardContent>
       </Card>
     </Box>

@@ -90,6 +90,24 @@ const manageChannelStore = create((set, get) => ({
     const data = await axiosInstance.get("/channel/subscriptions");
     return data.data;
   },
+  getChannelDetails: async (id) => {
+    try {
+      const response = await axiosInstance.get(`/channel/${id}`);
+      set({ isChannel: true, channelData: response.data.channel });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Fetching my channel failed:", error);
+      throw error;
+    }
+  },
+
+  getChannelVideos: async (id) => {
+    console.log("hi i am bibek jana", id);
+    const data = await axiosInstance.get(`/video/${id}`);
+    console.log("hi ", data.data.videos);
+    return data.data.videos;
+  },
 }));
 
 export default manageChannelStore;

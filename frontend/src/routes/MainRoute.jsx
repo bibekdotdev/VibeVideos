@@ -11,6 +11,8 @@ import ManageChannel from "../pages/ManageChannel";
 import VideoDetails from "../pages/VideoDetails";
 import EditVideo from "../components/EditVideo";
 import Subscriptions from "../pages/Subscriptions";
+import ChannelPage from "../pages/ChannelDetails";
+import ChannelDetails from "../pages/ChannelDetails";
 
 function MainRoute() {
   const { issingin } = useAuthStore();
@@ -30,6 +32,7 @@ function MainRoute() {
           <Route path="/video/:id" element={<VideoDetails />} />
           <Route path="/edit-video/:id" element={<EditVideo />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/channel/:id" element={<ChannelDetails />} />
         </>
       ) : (
         <Route path="*" element={<Authentication />} />

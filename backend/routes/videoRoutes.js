@@ -497,6 +497,23 @@ router.get(
   }
 );
 
+router.get("/:id", protectedRoute, async (req, res) => {
+  try {
+    console.log(req.params.id);
+    const channel = await Channel.findOne({ _id: req.params.id });
 
+    if (!channel) {
+      return res.status(404).json({ error: "channel not found." });
+    }
+    console.log("hi");
+    const videos = await Video.find({ uploadedBy: channel.owner });
+    return res.status(200).json({ videos });
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while fetching the videos." });
+  }
+});
 
 module.exports = router;

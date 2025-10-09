@@ -181,4 +181,38 @@ router.get("/subscriptions", protectedRoute, async (req, res) => {
   }
 });
 
+router.get("/:id", protectedRoute, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    console.log(userId);
+    let channel = await Channel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $addFields: {
+          subscriberCount: { $size: "$subscribers" },
+        },
+      },
+    ]);
+    channel = channel[0];
+    channel.isSubscribed = false;
+    let isChannel = await Channel.findOne({
+      subscribers: { $in: req.user.id },
+    });
+    if (isChannel) {
+      channel.isSubscribed = true;
+    }
+    if (!channel) {
+      return res.json({ success: true, channel: null });
+    }
+    res.json({ success: true, channel });
+  } catch (err) {
+    console.error("Fetch my channel error:", err);
+    res.status(500).json({ success: false, message: "Error fetching channel" });
+  }
+});
+
 module.exports = router;

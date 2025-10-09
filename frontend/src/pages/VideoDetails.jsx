@@ -148,14 +148,26 @@ const VideoDetails = () => {
               alt={channel.name}
               className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-gray-700"
             />
-            <div className="flex-1 flex flex-col">
-              <p className="font-semibold text-sm sm:text-base md:text-lg">
+            <div className="flex-1 flex flex-col min-w-0 max-w-190">
+              {/* Channel Name */}
+              <p
+                className="font-semibold text-sm sm:text-base md:text-lg truncate"
+                style={{ maxWidth: "100%" }}
+                title={channel.name} // full name on hover
+              >
                 {channel.name}
               </p>
-              <p className="text-gray-400 text-xs sm:text-sm md:text-base">
+
+              {/* Subscriber Count */}
+              <p
+                className="text-gray-400 text-xs sm:text-sm md:text-base truncate"
+                style={{ maxWidth: "100%" }}
+                title={`${subCount} subscribers`} // full text on hover
+              >
                 {subCount} subscribers
               </p>
             </div>
+
             <button
               onClick={handleSubscribeClick}
               onMouseEnter={() => setHovered(true)}

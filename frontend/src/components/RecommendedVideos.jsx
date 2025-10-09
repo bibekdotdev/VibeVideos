@@ -35,7 +35,7 @@ const RecommendedVideos = ({ videoId }) => {
               className="flex flex-col lg:flex-row gap-4 cursor-pointer hover:bg-gray-800 p-3 rounded-lg transition"
             >
               {/* Video Thumbnail */}
-              <div className="w-full lg:w-40 h-24 bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
+              <div className="w-full lg:w-40 h-[250px] sm:h-[250px] lg:h-24 bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                 <img
                   src={video.thumbnailUrl} // Use thumbnailUrl from backend
                   alt={video.title}
