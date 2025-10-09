@@ -50,7 +50,7 @@ const ChannelManager = () => {
   }
 
   return (
-    <div className="">
+    <div >
       {channel ? <MyChannel channel={channel} /> : <CreateChannel />}
     </div>
   );

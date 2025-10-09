@@ -51,7 +51,7 @@ const CreateChannel = ({ onCreated = () => {} }) => {
   };
 
   return (
-    <Box className="flex justify-center items-center py-10 px-4 bg-black min-h-screen">
+    <Box className="flex justify-center items-center py-10 px-4 bg-black min-h-screen p-4 ">
       <Card
         sx={{
           maxWidth: 700,
