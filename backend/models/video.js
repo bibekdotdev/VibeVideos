@@ -34,6 +34,7 @@ const videoSchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  vector: { type: [Number], default: [] },
 });
 
 module.exports = mongoose.model("Video", videoSchema);

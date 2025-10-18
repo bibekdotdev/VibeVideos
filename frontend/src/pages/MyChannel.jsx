@@ -53,7 +53,6 @@ const MyChannel = () => {
   const VideoCard = ({ video }) => {
     const videoRef = useRef(null);
 
-    // 3-dot menu
     const [anchorEl, setAnchorEl] = useState(null);
     const openMenu = Boolean(anchorEl);
     const handleMenuClick = (e) => {
@@ -62,14 +61,12 @@ const MyChannel = () => {
     };
     const handleMenuClose = () => setAnchorEl(null);
 
-    // Edit
     const handleEdit = (e) => {
       e.stopPropagation();
       navigate(`/edit-video/${video._id}`);
       handleMenuClose();
     };
 
-    // Delete
     const handleDelete = async (e) => {
       e.stopPropagation();
       if (!window.confirm("Are you sure you want to delete this video?"))
@@ -85,7 +82,6 @@ const MyChannel = () => {
       }
     };
 
-    // Hover to play
     const handleMouseEnter = () => {
       if (videoRef.current) {
         videoRef.current.currentTime = 0;
@@ -111,7 +107,6 @@ const MyChannel = () => {
         onMouseLeave={handleMouseLeave}
       >
         <div className="relative group w-full">
-          {/* Thumbnail and video overlay */}
           <img
             src={video.thumbnailUrl || ""}
             alt={video.title}
@@ -265,7 +260,6 @@ const MyChannel = () => {
             "& .Mui-selected": { color: "red" },
           }}
         >
-          <Tab label="Home" />
           <Tab label="Videos" />
           <Tab label="Playlists" />
           <Tab label="About" />
@@ -311,27 +305,27 @@ const MyChannel = () => {
       </div>
 
       {/* Tab Content */}
-      {[tab === 0, tab === 1].some(Boolean) && (
+      {tab === 0 && (
         <div className="w-full px-4 sm:px-6 md:px-10 mt-8 sm:mt-10">
           <h3 className="text-base sm:text-lg font-semibold mb-4">
-            {tab === 0 ? "Featured Videos" : "All Videos"}
+            All Videos
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {(tab === 0 ? myvideos.slice(0, 4) : myvideos).map((video) => (
+            {myvideos.map((video) => (
               <VideoCard key={video._id} video={video} />
             ))}
           </div>
         </div>
       )}
 
-      {tab === 2 && (
+      {tab === 1 && (
         <div className="w-full px-4 sm:px-6 md:px-10 mt-8 sm:mt-10 text-gray-400">
           <h3 className="text-base sm:text-lg font-semibold mb-4">Playlists</h3>
           <p className="text-sm">No playlists created yet.</p>
         </div>
       )}
 
-      {tab === 3 && (
+      {tab === 2 && (
         <div className="w-full px-4 sm:px-6 md:px-10 mt-8 sm:mt-10 text-gray-400">
           <h3 className="text-base sm:text-lg font-semibold mb-4">About</h3>
           <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed break-words line-clamp-4 md:line-clamp-none">

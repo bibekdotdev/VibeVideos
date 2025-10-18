@@ -516,4 +516,121 @@ router.get("/:id", protectedRoute, async (req, res) => {
   }
 });
 
+router.get("/home/fetchallvideos", protectedRoute, async (req, res) => {
+  try {
+    console.log("bibek");
+    const videos = await Video.aggregate([
+      { $sample: { size: await Video.countDocuments() } },
+
+      {
+        $lookup: {
+          from: "channels",
+          localField: "uploadedBy",
+          foreignField: "owner",
+          as: "detailsOfChannel",
+        },
+      },
+
+      {
+        $unwind: {
+          path: "$detailsOfChannel",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          videoUrl: 1,
+          thumbnailUrl: 1,
+          views: 1,
+          likes: 1,
+          dislikes: 1,
+          uploadedAt: 1,
+          uploadedBy: 1,
+          "detailsOfChannel._id": 1,
+          "detailsOfChannel.name": 1,
+          "detailsOfChannel.logoUrl": 1,
+          "detailsOfChannel.subscribers": 1,
+        },
+      },
+    ]);
+
+    return res.status(200).json({ videos });
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while fetching videos." });
+  }
+});
+
+router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
+  try {
+    const { value } = req.params; // the search query
+
+    if (!value) {
+      return res.status(400).json({ error: "Search value is required." });
+    }
+
+    // 1️⃣ Use Atlas $search text index
+    const videos = await Video.aggregate([
+      {
+        $search: {
+          index: "default", 
+          text: {
+            query: value,
+            path: {
+              wildcard: "*", 
+            },
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "channels",
+          localField: "uploadedBy",
+          foreignField: "owner",
+          as: "detailsOfChannel",
+        },
+      },
+      {
+        $unwind: {
+          path: "$detailsOfChannel",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          videoUrl: 1,
+          thumbnailUrl: 1,
+          views: 1,
+          likes: 1,
+          dislikes: 1,
+          uploadedAt: 1,
+          uploadedBy: 1,
+          "detailsOfChannel._id": 1,
+          "detailsOfChannel.name": 1,
+          "detailsOfChannel.logoUrl": 1,
+          "detailsOfChannel.subscribers": 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ videos });
+  } catch (err) {
+    console.error("Search error:", err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while performing text search." });
+  }
+});
+
+module.exports = router;
+
 module.exports = router;
