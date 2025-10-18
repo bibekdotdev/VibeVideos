@@ -13,6 +13,7 @@ import EditVideo from "../components/EditVideo";
 import Subscriptions from "../pages/Subscriptions";
 import ChannelPage from "../pages/ChannelDetails";
 import ChannelDetails from "../pages/ChannelDetails";
+import SavedVideos from "../pages/SavedVideos";
 
 function MainRoute() {
   const { issingin } = useAuthStore();
@@ -33,6 +34,7 @@ function MainRoute() {
           <Route path="/edit-video/:id" element={<EditVideo />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/channel/:id" element={<ChannelDetails />} />
+          <Route path="/saved" element={<SavedVideos />} />
         </>
       ) : (
         <Route path="*" element={<Authentication />} />

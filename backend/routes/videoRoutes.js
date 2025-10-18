@@ -10,6 +10,8 @@ const Channel = require("../models/channnel");
 const Video = require("../models/video");
 const User = require("../models/user");
 const protectedRoute = require("../middlewares/protectedRoute");
+const SavedVideo = require("../models/savedvideo");
+const { video } = require("../config/cloudinary");
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -97,8 +99,13 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid video ID" });
     }
-
-    // Aggregate video with channel details
+    let istrue = false;
+    const savedDocs = await SavedVideo.find({
+      savedVideos: { $in: [req.user.id] },
+    });
+    if (savedDocs) {
+      istrue = true;
+    }
     const videoData = await Video.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
       {
@@ -156,6 +163,7 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
       ...video,
       userReaction,
       isSubscribed,
+      istrue,
     });
   } catch (err) {
     console.error("Error fetching video:", err);
@@ -579,11 +587,11 @@ router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
     const videos = await Video.aggregate([
       {
         $search: {
-          index: "default", 
+          index: "default",
           text: {
             query: value,
             path: {
-              wildcard: "*", 
+              wildcard: "*",
             },
           },
         },
@@ -631,6 +639,111 @@ router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
   }
 });
 
-module.exports = router;
+router.put("/save/:video_id", protectedRoute, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const videoId = req.params.video_id;
+
+    let savedDoc = await SavedVideo.findOne({ savedBy: userId });
+
+    if (!savedDoc) {
+      savedDoc = new SavedVideo({ savedBy: userId, savedVideos: [videoId] });
+      await savedDoc.save();
+      return res.json({
+        success: true,
+        message: "Video saved successfully",
+        isSaved: true,
+      });
+    }
+
+    const isAlreadySaved = savedDoc.savedVideos.includes(videoId);
+
+    if (isAlreadySaved) {
+      savedDoc.savedVideos = savedDoc.savedVideos.filter(
+        (id) => id.toString() !== videoId
+      );
+      await savedDoc.save();
+      return res.json({
+        success: true,
+        message: "Video removed from saved list",
+        isSaved: false,
+      });
+    } else {
+      savedDoc.savedVideos.push(videoId);
+      await savedDoc.save();
+      return res.json({
+        success: true,
+        message: "Video saved successfully",
+        isSaved: true,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
+// Fetch saved videos for the logged-in user
+router.get("/saved/fetchvideos", protectedRoute, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId);
+
+    const savedDocs = await SavedVideo.find({ savedBy: userId });
+    console.log("Saved videors are", savedDocs);
+    if (!savedDocs || savedDocs.length === 0) {
+      return res.json({ success: true, savedVideos: [] });
+    }
+
+    const allSavedVideoIds = savedDocs
+      .flatMap((doc) => doc.savedVideos)
+      .filter(Boolean);
+
+    if (allSavedVideoIds.length === 0) {
+      return res.json({ success: true, savedVideos: [] });
+    }
+
+    const videos = await Video.aggregate([
+      { $match: { _id: { $in: allSavedVideoIds } } },
+      {
+        $lookup: {
+          from: "channels",
+          localField: "uploadedBy",
+          foreignField: "owner",
+          as: "detailsOfChannel",
+        },
+      },
+      {
+        $unwind: {
+          path: "$detailsOfChannel",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          videoUrl: 1,
+          thumbnailUrl: 1,
+          views: 1,
+          likes: 1,
+          dislikes: 1,
+          uploadedAt: 1,
+          uploadedBy: 1,
+          "detailsOfChannel._id": 1,
+          "detailsOfChannel.name": 1,
+          "detailsOfChannel.logoUrl": 1,
+          "detailsOfChannel.subscribers": 1,
+        },
+      },
+    ]);
+    console.log("Saved videors are", videos);
+    res.json({ success: true, savedVideos: videos });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 module.exports = router;

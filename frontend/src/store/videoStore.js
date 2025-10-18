@@ -6,10 +6,13 @@ const useVideoStore = create((set, get) => ({
   video: null,
   allvideos: null,
   loding: false,
+  isvideosaved: false,
+
   getVideoDetailsById: async (id) => {
     try {
       const res = await axiosInstance.get(`/video/getVideo/${id}`);
       const video = res.data;
+      console.log("ho ", video.istrue);
       set({
         video: {
           ...video,
@@ -17,7 +20,7 @@ const useVideoStore = create((set, get) => ({
           dislikes: video.dislikes?.length || 0,
         },
       });
-
+      set({ isvideosaved: video.istrue });
       return get().video;
     } catch (err) {
       console.error("Error fetching video details:", err);
@@ -73,17 +76,12 @@ const useVideoStore = create((set, get) => ({
     try {
       console.log("Searching videos…");
 
-      // 1️⃣ If no value, fetch all videos
       if (!value || value.trim() === "") {
         return get().fetchallvideos();
       }
-
-      // 2️⃣ Call backend search route
       const res = await axiosInstance.get(
         `/video/searchvideos/${encodeURIComponent(value)}`
       );
-
-      // 3️⃣ Log and update state
       console.log("Search results:", res.data.videos);
       set({ allvideos: res.data.videos });
     } catch (err) {
@@ -91,6 +89,22 @@ const useVideoStore = create((set, get) => ({
         "Error searching videos:",
         err.response?.data || err.message
       );
+    }
+  },
+  fetchSavedVideos: async () => {
+    try {
+      const res = await axiosInstance.get("/video/saved/fetchvideos");
+      return res.data.savedVideos;
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  toggleSaveVideo: async (videoId) => {
+    try {
+      await axiosInstance.put(`/video/save/${videoId}`);
+      await get().fetchSavedVideos(); // update saved videos after saving
+    } catch (err) {
+      console.error(err);
     }
   },
 }));

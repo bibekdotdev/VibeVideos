@@ -5,6 +5,7 @@ import {
   Filter,
   MoreHorizontal,
   Users,
+  Bookmark, // add Bookmark icon
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useClerk } from "@clerk/clerk-react";
@@ -38,6 +39,11 @@ const Sidebar = () => {
       name: "Subscriptions",
       path: "/subscriptions",
       icon: <Users size={20} />,
+    },
+    {
+      name: "Saved Videos", // new menu item
+      path: "/saved",
+      icon: <Bookmark size={20} />,
     },
     { name: "Options", path: "/options", icon: <MoreHorizontal size={20} /> },
   ];
