@@ -7,7 +7,7 @@ const User = require("../models/user");
 const mongoose = require("mongoose");
 const Video = require("../models/video");
 const { video } = require("../config/cloudinary");
-// Create Channel
+
 router.post(
   "/create",
   protectedRoute,
@@ -42,7 +42,7 @@ router.post(
       const channel = await Channel.create({
         name,
         desc,
-        logoUrl: req.files.logo[0].path, // or secure_url if Cloudinary
+        logoUrl: req.files.logo[0].path,
         bannerUrl: req.files.banner[0].path,
         owner: req.user.id,
       });
@@ -61,7 +61,6 @@ router.post(
   }
 );
 
-// Get logged-in user's channel
 router.get("/my", protectedRoute, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -115,7 +114,6 @@ router.put(
         });
       }
 
-      // ✅ Update only provided fields
       if (name) isChannel.name = name;
       if (desc) isChannel.desc = desc;
       if (req.files?.logo) isChannel.logoUrl = req.files.logo[0].path;
@@ -155,7 +153,6 @@ router.get("/subscriptions", protectedRoute, async (req, res) => {
       .sort({ createdAt: -1 })
       .limit(20);
     const v = videos.map((video) => {
-      // Find the channel that matches the video's uploader
       const channel = subscriptions.find((subscribe) =>
         subscribe.owner.equals(video.uploadedBy._id)
       );

@@ -28,13 +28,13 @@ const Sidebar = () => {
 
   const menuItems = [
     { name: "Home", path: "/", icon: <Home size={20} /> },
-    { name: "Explore", path: "/explore", icon: <Compass size={20} /> },
+
     {
       name: "Channel Manager",
       path: "/channelmanager",
       icon: <Film size={20} />,
     },
-    { name: "Filters", path: "/filters", icon: <Filter size={20} /> },
+
     {
       name: "Subscriptions",
       path: "/subscriptions",
@@ -45,7 +45,6 @@ const Sidebar = () => {
       path: "/saved",
       icon: <Bookmark size={20} />,
     },
-    { name: "Options", path: "/options", icon: <MoreHorizontal size={20} /> },
   ];
 
   return (

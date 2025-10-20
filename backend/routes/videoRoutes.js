@@ -12,14 +12,13 @@ const User = require("../models/user");
 const protectedRoute = require("../middlewares/protectedRoute");
 const SavedVideo = require("../models/savedvideo");
 const { video } = require("../config/cloudinary");
-// Configure Cloudinary
+
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Setup Cloudinary storage
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
@@ -41,6 +40,7 @@ router.post(
   async (req, res) => {
     try {
       const { title, description, visibility } = req.body;
+
       if (!title || !visibility || !req.files?.video?.[0])
         return res
           .status(400)
@@ -95,7 +95,6 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate video ID
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid video ID" });
     }
@@ -110,10 +109,10 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
       {
         $lookup: {
-          from: "channels", // collection name
-          localField: "uploadedBy", // field in Video
-          foreignField: "owner", // field in Channel
-          as: "detailsOfChannel", // alias
+          from: "channels",
+          localField: "uploadedBy",
+          foreignField: "owner",
+          as: "detailsOfChannel",
         },
       },
       {
@@ -122,7 +121,7 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
           title: 1,
           description: 1,
           videoUrl: 1,
-          views: 1,
+
           likes: 1,
           dislikes: 1,
           uploadedAt: 1,
@@ -139,7 +138,6 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
 
     const video = videoData[0];
 
-    // Check user reaction
     let userReaction = null;
     const userId = req.user.id.toString();
 
@@ -149,7 +147,6 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
       userReaction = "dislike";
     }
 
-    // Check subscription
     let isSubscribed = false;
     const channel = video.detailsOfChannel?.[0];
     if (channel) {
@@ -158,7 +155,6 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
         .includes(userId);
     }
 
-    // Return video with user info
     res.status(200).json({
       ...video,
       userReaction,
@@ -174,7 +170,7 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
 router.put(
   "/update/:id",
   protectedRoute,
-  parser.single("thumbnail"), // only thumbnail, video not updated here
+  parser.single("thumbnail"),
   async (req, res) => {
     try {
       const videoId = req.params.id;
@@ -192,19 +188,16 @@ router.put(
       const video = await Video.findById(videoId);
       if (!video) return res.status(404).json({ error: "Video not found" });
 
-      // Check ownership
       if (video.uploadedBy.toString() !== user._id.toString()) {
         return res.status(403).json({ error: "Not authorized" });
       }
 
-      // Update fields
       if (title) video.title = title;
       if (description) video.description = description;
       if (visibility) video.visibility = visibility;
 
-      // Update thumbnail if uploaded
       if (req.file && req.file.path) {
-        video.thumbnailUrl = req.file.path; // Cloudinary returns file URL in path
+        video.thumbnailUrl = req.file.path;
       }
 
       await video.save();
@@ -219,7 +212,6 @@ router.delete("/deletevideo/:_id", protectedRoute, async (req, res) => {
   try {
     const videoId = req.params._id;
 
-    // Find the user making the request
     const user = await User.findOne({
       _id: req.user.id,
       clerkId: req.user.clerkId,
@@ -229,20 +221,17 @@ router.delete("/deletevideo/:_id", protectedRoute, async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // Find the video to delete
     const video = await Video.findById(videoId);
     if (!video) {
       return res.status(404).json({ error: "Video not found." });
     }
 
-    // Check if the video belongs to the user
     if (video.uploadedBy.toString() !== user._id.toString()) {
       return res
         .status(403)
         .json({ error: "You are not allowed to delete this video." });
     }
 
-    // Delete the video
     await Video.findByIdAndDelete(videoId);
 
     res.status(200).json({ message: "Video deleted successfully." });
@@ -253,7 +242,7 @@ router.delete("/deletevideo/:_id", protectedRoute, async (req, res) => {
 });
 router.put("/:id/reaction", protectedRoute, async (req, res) => {
   const { id } = req.params;
-  const { reaction } = req.body; // "like" or "dislike"
+  const { reaction } = req.body;
   const userId = req.user.id;
 
   if (!["like", "dislike"].includes(reaction)) {
@@ -264,11 +253,9 @@ router.put("/:id/reaction", protectedRoute, async (req, res) => {
     const video = await Video.findById(id);
     if (!video) return res.status(404).json({ error: "Video not found." });
 
-    // Remove user from both arrays first
     video.likes = video.likes.filter((uid) => uid.toString() !== userId);
     video.dislikes = video.dislikes.filter((uid) => uid.toString() !== userId);
 
-    // Add user to the correct reaction array
     if (reaction === "like") video.likes.push(userId);
     if (reaction === "dislike") video.dislikes.push(userId);
 
@@ -286,9 +273,8 @@ router.put("/:id/reaction", protectedRoute, async (req, res) => {
 
 router.get("/my-video/:id", protectedRoute, async (req, res) => {
   try {
-    const videoId = req.params.id; // Corrected param name
+    const videoId = req.params.id;
 
-    // Find the user making the request
     const user = await User.findOne({
       _id: req.user.id,
       clerkId: req.user.clerkId,
@@ -298,7 +284,6 @@ router.get("/my-video/:id", protectedRoute, async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    // Find the video by ID and ensure it's owned by the user
     const video = await Video.findOne({ _id: videoId, uploadedBy: user._id });
     console.log(video);
     if (!video) {
@@ -328,12 +313,10 @@ router.put("/update/:id", protectedRoute, async (req, res) => {
     const video = await Video.findById(videoId);
     if (!video) return res.status(404).json({ error: "Video not found" });
 
-    // Check if the user owns the video
     if (video.uploadedBy.toString() !== user._id.toString()) {
       return res.status(403).json({ error: "Not authorized" });
     }
 
-    // Update allowed fields only
     if (title) video.title = title;
     if (description) video.description = description;
     if (visibility) video.visibility = visibility;
@@ -347,17 +330,16 @@ router.put("/update/:id", protectedRoute, async (req, res) => {
 });
 router.post("/:videoId/addcomment", protectedRoute, async (req, res) => {
   try {
-    const { videoId } = req.params; // video id
-    const { text } = req.body; // comment text
+    const { videoId } = req.params;
+    const { text } = req.body;
 
     const id = videoId;
-    // Verify video exists
+
     const video = await Video.findById(id);
     if (!video) {
       return res.status(404).json({ error: "Video not found." });
     }
 
-    // Find the user making the request
     const user = await User.findOne({
       _id: req.user.id,
       clerkId: req.user.clerkId,
@@ -399,7 +381,6 @@ router.get("/:videoId/fetchcomment", protectedRoute, async (req, res) => {
       return res.status(200).json({ comments: [] });
     }
 
-    // Populate author info for each comment
     const commentsWithAuthor = await Promise.all(
       commentDoc.commentsData.map(async (comment) => {
         let authorInfo = {};
@@ -444,7 +425,6 @@ router.post("/:channelId/subscribe", protectedRoute, async (req, res) => {
   try {
     const { channelId } = req.params;
 
-    // Find the channel by its _id
     const channel = await Channel.findById(channelId);
     if (!channel) {
       return res.status(404).json({ error: "Channel not found" });
@@ -553,7 +533,7 @@ router.get("/home/fetchallvideos", protectedRoute, async (req, res) => {
           description: 1,
           videoUrl: 1,
           thumbnailUrl: 1,
-          views: 1,
+
           likes: 1,
           dislikes: 1,
           uploadedAt: 1,
@@ -577,13 +557,12 @@ router.get("/home/fetchallvideos", protectedRoute, async (req, res) => {
 
 router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
   try {
-    const { value } = req.params; // the search query
+    const { value } = req.params;
 
     if (!value) {
       return res.status(400).json({ error: "Search value is required." });
     }
 
-    // 1️⃣ Use Atlas $search text index
     const videos = await Video.aggregate([
       {
         $search: {
@@ -617,7 +596,7 @@ router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
           description: 1,
           videoUrl: 1,
           thumbnailUrl: 1,
-          views: 1,
+
           likes: 1,
           dislikes: 1,
           uploadedAt: 1,
@@ -629,7 +608,7 @@ router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
         },
       },
     ]);
-
+    console.log(videos);
     res.status(200).json({ videos });
   } catch (err) {
     console.error("Search error:", err);
@@ -683,7 +662,6 @@ router.put("/save/:video_id", protectedRoute, async (req, res) => {
   }
 });
 
-// Fetch saved videos for the logged-in user
 router.get("/saved/fetchvideos", protectedRoute, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -726,7 +704,7 @@ router.get("/saved/fetchvideos", protectedRoute, async (req, res) => {
           description: 1,
           videoUrl: 1,
           thumbnailUrl: 1,
-          views: 1,
+
           likes: 1,
           dislikes: 1,
           uploadedAt: 1,

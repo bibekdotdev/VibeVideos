@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 require("dotenv").config();
-const JWT_SECRET = process.env.JWT_SECRET; // move to process.env
+const JWT_SECRET = process.env.JWT_SECRET; 
 
 router.post("/signin", async (req, res) => {
   try {
@@ -29,7 +29,6 @@ router.post("/signin", async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // ✅ store in cookie named "token"
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -49,10 +48,10 @@ router.post("/signin", async (req, res) => {
 
 router.post("/signout", (req, res) => {
   try {
-    const token = req.cookies.token; // ✅ now matches signin
+    const token = req.cookies.token; 
     console.log("Token before clearing:", token);
 
-    // ✅ clear the correct cookie
+   
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

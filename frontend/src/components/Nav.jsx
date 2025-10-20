@@ -1,13 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { User } from "lucide-react";
 import manageChannelStore from "../store/manageChannelStore";
 
 const Nav = () => {
-  const { channelData } = manageChannelStore();
-
+  const { myChannel } = manageChannelStore();
+  const [channelData, setChannelData] = useState(null);
   useEffect(() => {
-    console.log("HI", channelData);
-  }, [channelData]);
+    const fetchChannel = async () => {
+      try {
+        const channeldata = await myChannel();
+
+        setChannelData(channeldata.channel);
+      } catch (error) {
+        console.error("Error fetching channel:", error);
+      }
+    };
+    fetchChannel();
+  }, []);
 
   return (
     <div className="flex items-center justify-between px-4 md:px-6 py-3 bg-black shadow-lg sticky top-0 z-50 border-b border-red-600/40">

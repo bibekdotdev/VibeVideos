@@ -158,10 +158,6 @@ const VideoDetails = () => {
           <p className="text-gray-300 text-sm sm:text-sm md:text-base mt-1 break-words break-all whitespace-normal">
             {video.description}
           </p>
-          <p className="text-gray-400 text-xs sm:text-sm md:text-base mt-1 break-words break-all whitespace-normal">
-            {video.views.toLocaleString()} views •{" "}
-            {new Date(video.uploadedAt).toLocaleDateString()}
-          </p>
         </div>
 
         {/* Like / Dislike / Save / Share */}

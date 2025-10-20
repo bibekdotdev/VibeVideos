@@ -2,14 +2,13 @@
 const mongoose = require("mongoose");
 const commentSchema = new mongoose.Schema(
   {
-    // Which video this comment belongs to
+   
     commentFor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Video",
       required: true,
     },
 
-    // Array of comments on that video
     commentsData: [
       {
         user: {

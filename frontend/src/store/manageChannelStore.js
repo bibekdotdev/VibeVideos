@@ -5,7 +5,7 @@ const manageChannelStore = create((set, get) => ({
   isChannel: false,
   channelData: null,
 
-  // ✅ Create Channel
+ 
   createChannel: async (formData) => {
     try {
       const response = await axiosInstance.post("/channel/create", formData, {
@@ -20,7 +20,7 @@ const manageChannelStore = create((set, get) => ({
     }
   },
 
-  // ✅ Fetch My Channel
+
   myChannel: async () => {
     try {
       const response = await axiosInstance.get("/channel/my");

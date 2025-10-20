@@ -33,7 +33,6 @@ const useVideoStore = create((set, get) => ({
         reaction,
       });
 
-      // update state with new counts
       set((state) => ({
         video: {
           ...state.video,
@@ -76,7 +75,7 @@ const useVideoStore = create((set, get) => ({
     try {
       console.log("Searching videos…");
 
-      if (!value || value.trim() === "") {
+      if (!value || value.trim() === "" || value.trim() === "All") {
         return get().fetchallvideos();
       }
       const res = await axiosInstance.get(
@@ -102,7 +101,7 @@ const useVideoStore = create((set, get) => ({
   toggleSaveVideo: async (videoId) => {
     try {
       await axiosInstance.put(`/video/save/${videoId}`);
-      await get().fetchSavedVideos(); // update saved videos after saving
+      await get().fetchSavedVideos();
     } catch (err) {
       console.error(err);
     }
