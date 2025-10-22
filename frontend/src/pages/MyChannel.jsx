@@ -3,7 +3,6 @@ import {
   Settings,
   ThumbsUp,
   ThumbsDown,
-  Eye,
   MoreVertical,
 } from "lucide-react";
 
@@ -18,7 +17,12 @@ import {
   Tooltip,
   Menu,
   MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+
 import { useEffect, useState, useRef } from "react";
 import manageChannelStore from "../store/manageChannelStore";
 import { useNavigate } from "react-router-dom";
@@ -52,9 +56,10 @@ const MyChannel = () => {
 
   const VideoCard = ({ video }) => {
     const videoRef = useRef(null);
-
     const [anchorEl, setAnchorEl] = useState(null);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
     const openMenu = Boolean(anchorEl);
+
     const handleMenuClick = (e) => {
       e.stopPropagation();
       setAnchorEl(e.currentTarget);
@@ -67,20 +72,25 @@ const MyChannel = () => {
       handleMenuClose();
     };
 
-    const handleDelete = async (e) => {
+    const handleDeleteClick = (e) => {
       e.stopPropagation();
-      if (!window.confirm("Are you sure you want to delete this video?"))
-        return;
+      setOpenDeleteDialog(true);
+      handleMenuClose();
+    };
 
+    const confirmDelete = async () => {
       try {
         await deleteVideo(video._id);
         setmyvideos(myvideos.filter((v) => v._id !== video._id));
-        handleMenuClose();
       } catch (err) {
         console.error("Error deleting video:", err);
         alert("Failed to delete the video. Please try again.");
+      } finally {
+        setOpenDeleteDialog(false);
       }
     };
+
+    const cancelDelete = () => setOpenDeleteDialog(false);
 
     const handleMouseEnter = () => {
       if (videoRef.current) {
@@ -98,110 +108,123 @@ const MyChannel = () => {
     const handleCardClick = () => navigate(`/video/${video._id}`);
 
     return (
-      <Card
-        className="bg-gray-900 text-white rounded-xl shadow-lg overflow-hidden
-                   hover:scale-105 hover:shadow-red-900/40 transition-all duration-300 cursor-pointer
-                   w-full sm:w-full md:w-auto"
-        onClick={handleCardClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="relative group w-full">
-          <img
-            src={video.thumbnailUrl || ""}
-            alt={video.title}
-            className="w-full h-48 sm:h-48 md:h-52 lg:h-56 object-cover group-hover:opacity-0 transition duration-300"
-          />
-          <video
-            ref={videoRef}
-            src={video.videoUrl}
-            muted
-            playsInline
-            className="w-full h-48 sm:h-48 md:h-52 lg:h-56 object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition duration-300"
-          />
+      <>
+        <Card
+          className="bg-gray-900 text-white rounded-xl shadow-lg overflow-hidden
+                     hover:scale-105 hover:shadow-red-900/40 transition-all duration-300 cursor-pointer
+                     w-full sm:w-full md:w-auto"
+          onClick={handleCardClick}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div className="relative group w-full">
+            <img
+              src={video.thumbnailUrl || ""}
+              alt={video.title}
+              className="w-full h-48 sm:h-48 md:h-52 lg:h-56 object-cover group-hover:opacity-0 transition duration-300"
+            />
+            <video
+              ref={videoRef}
+              src={video.videoUrl}
+              muted
+              playsInline
+              className="w-full h-48 sm:h-48 md:h-52 lg:h-56 object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition duration-300"
+            />
 
-          <Chip
-            label={new Date(video.uploadedAt).toLocaleDateString()}
-            size="small"
-            sx={{
-              position: "absolute",
-              bottom: 8,
-              right: 8,
-              backgroundColor: "rgba(0,0,0,0.75)",
-              color: "white",
-              fontSize: "0.7rem",
-              borderRadius: "6px",
-            }}
-          />
-
-          <Button
-            onClick={handleMenuClick}
-            onMouseDown={(e) => e.stopPropagation()}
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              minWidth: 0,
-              padding: "4px",
-              color: "white",
-              zIndex: 20,
-            }}
-          >
-            <MoreVertical />
-          </Button>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={openMenu}
-            onClose={handleMenuClose}
-            onClick={(e) => e.stopPropagation()}
-            PaperProps={{
-              sx: {
-                backgroundColor: "#111",
+            <Chip
+              label={new Date(video.uploadedAt).toLocaleDateString()}
+              size="small"
+              sx={{
+                position: "absolute",
+                bottom: 8,
+                right: 8,
+                backgroundColor: "rgba(0,0,0,0.75)",
                 color: "white",
-                minWidth: 120,
-                "& .MuiMenuItem-root": {
-                  "&:hover": { backgroundColor: "#222" },
+                fontSize: "0.7rem",
+                borderRadius: "6px",
+              }}
+            />
+
+            <Button
+              onClick={handleMenuClick}
+              onMouseDown={(e) => e.stopPropagation()}
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                minWidth: 0,
+                padding: "4px",
+                color: "white",
+                zIndex: 20,
+              }}
+            >
+              <MoreVertical />
+            </Button>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={openMenu}
+              onClose={handleMenuClose}
+              onClick={(e) => e.stopPropagation()}
+              PaperProps={{
+                sx: {
+                  backgroundColor: "#111",
+                  color: "white",
+                  minWidth: 120,
+                  "& .MuiMenuItem-root": {
+                    "&:hover": { backgroundColor: "#222" },
+                  },
                 },
-              },
-            }}
-          >
-            <MenuItem onClick={handleEdit}>Edit</MenuItem>
-            <MenuItem onClick={handleDelete}>Delete</MenuItem>
-          </Menu>
-        </div>
-
-        <CardContent className="space-y-2 bg-gray-900">
-          <h3 className="font-bold text-sm sm:text-base truncate text-gray-200 group-hover:text-white transition">
-            {video.title}
-          </h3>
-          <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
-            {video.description}
-          </p>
-
-          <div className="flex items-center justify-between text-gray-400 text-xs sm:text-sm pt-2 border-t border-gray-800">
-            <div className="flex items-center space-x-4">
-              <Tooltip title="Likes">
-                <div className="flex items-center space-x-1 hover:text-white transition cursor-pointer">
-                  <ThumbsUp size={14} />
-                  <span>{video?.likes?.length ?? 0}</span>
-                </div>
-              </Tooltip>
-              <Tooltip title="Dislikes">
-                <div className="flex items-center space-x-1 hover:text-white transition cursor-pointer">
-                  <ThumbsDown size={14} />
-                  <span>{video?.dislikes?.length ?? 0}</span>
-                </div>
-              </Tooltip>
-            </div>
-
-            <div className="flex items-center space-x-1 hover:text-white transition">
-              <Eye size={14} />
-              <span>{video.views ?? 0} views</span>
-            </div>
+              }}
+            >
+              <MenuItem onClick={handleEdit}>Edit</MenuItem>
+              <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
+            </Menu>
           </div>
-        </CardContent>
-      </Card>
+
+          <CardContent className="space-y-2 bg-gray-900">
+            <h3 className="font-bold text-sm sm:text-base truncate text-gray-200 group-hover:text-white transition">
+              {video.title}
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
+              {video.description}
+            </p>
+
+            <div className="flex items-center justify-between text-gray-400 text-xs sm:text-sm pt-2 border-t border-gray-800">
+              <div className="flex items-center space-x-4">
+                <Tooltip title="Likes">
+                  <div className="flex items-center space-x-1 hover:text-white transition cursor-pointer">
+                    <ThumbsUp size={14} />
+                    <span>{video?.likes?.length ?? 0}</span>
+                  </div>
+                </Tooltip>
+                <Tooltip title="Dislikes">
+                  <div className="flex items-center space-x-1 hover:text-white transition cursor-pointer">
+                    <ThumbsDown size={14} />
+                    <span>{video?.dislikes?.length ?? 0}</span>
+                  </div>
+                </Tooltip>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={openDeleteDialog} onClose={cancelDelete}>
+          <DialogTitle>Delete Video</DialogTitle>
+          <DialogContent>
+            Are you sure you want to delete <strong>{video.title}</strong>?
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={cancelDelete} color="inherit">
+              Cancel
+            </Button>
+            <Button onClick={confirmDelete} color="error" variant="contained">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
     );
   };
 

@@ -9,8 +9,11 @@ import {
   Typography,
   Box,
   Avatar,
+  CircularProgress,
 } from "@mui/material";
 import manageChannelStore from "../store/manageChannelStore";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ManageChannel = () => {
   const { myChannel, updateChannel, getChannelVideos } = manageChannelStore();
@@ -23,20 +26,30 @@ const ManageChannel = () => {
   const [existingLogo, setExistingLogo] = useState("");
   const [existingBanner, setExistingBanner] = useState("");
   const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
 
   // ✅ Fetch current channel data
   useEffect(() => {
     const fetchData = async () => {
-      const data = await myChannel();
-      if (data?.channel) {
-        setChannelName(data.channel.name);
-        setChannelDesc(data.channel.desc);
-        setExistingLogo(data.channel.logoUrl);
-        setExistingBanner(data.channel.bannerUrl);
+      try {
+        setLoading(true);
+        const data = await myChannel();
+        if (data?.channel) {
+          setChannelName(data.channel.name);
+          setChannelDesc(data.channel.desc);
+          setExistingLogo(data.channel.logoUrl);
+          setExistingBanner(data.channel.bannerUrl);
 
-        // Fetch channel videos
-        const channelVideos = await getChannelVideos(data.channel._id);
-        setVideos(channelVideos || []);
+          // Fetch channel videos
+          const channelVideos = await getChannelVideos(data.channel._id);
+          setVideos(channelVideos || []);
+        }
+      } catch (error) {
+        console.error("Error fetching channel data:", error);
+        toast.error("Failed to fetch channel data");
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -45,6 +58,8 @@ const ManageChannel = () => {
   // ✅ Handle update
   const handleUpdateChannel = async (e) => {
     e.preventDefault();
+    setUpdating(true);
+
     try {
       const formData = new FormData();
       formData.append("name", channelName);
@@ -53,18 +68,30 @@ const ManageChannel = () => {
       if (channelBanner) formData.append("banner", channelBanner);
 
       const res = await updateChannel(formData);
-      console.log("UpdateChannel Response:", res);
-
       if (res.success) {
-        navigate("/my-channel");
+        toast.success("Channel updated successfully!");
+        navigate("/channelmanager");
+      } else {
+        toast.error("Failed to update channel");
+        setUpdating(false);
       }
     } catch (error) {
       console.error("Error updating channel:", error);
+      toast.error("Error updating channel");
+      setUpdating(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black text-white">
+        <CircularProgress style={{ color: "red" }} />
+      </div>
+    );
+  }
+
   return (
-    <Box className="flex flex-col items-center py-10 px-4  bg-black min-h-screen">
+    <Box className="flex flex-col items-center py-10 px-4 bg-black min-h-screen">
       <Card
         sx={{
           maxWidth: 700,
@@ -148,12 +175,7 @@ const ManageChannel = () => {
                     ? URL.createObjectURL(channelLogo)
                     : existingLogo || ""
                 }
-                sx={{
-                  width: 110,
-                  height: 110,
-                  bgcolor: "#222",
-                  fontSize: 40,
-                }}
+                sx={{ width: 110, height: 110, bgcolor: "#222", fontSize: 40 }}
               >
                 {!channelLogo && !existingLogo && <Image size={32} />}
               </Avatar>
@@ -199,8 +221,7 @@ const ManageChannel = () => {
                 },
               }}
             />
-            <br />
-            <br />
+
             {/* Channel Description */}
             <TextField
               fullWidth
@@ -227,7 +248,13 @@ const ManageChannel = () => {
               type="submit"
               fullWidth
               variant="contained"
-              startIcon={<Upload />}
+              startIcon={
+                updating ? (
+                  <CircularProgress size={20} sx={{ color: "white" }} />
+                ) : (
+                  <Upload />
+                )
+              }
               sx={{
                 mt: 3,
                 background:
@@ -240,12 +267,11 @@ const ManageChannel = () => {
                 fontWeight: "bold",
                 py: 1.5,
               }}
+              disabled={updating}
             >
-              Update Channel
+              {updating ? "Updating..." : "Update Channel"}
             </Button>
           </form>
-
-          {/* 🔹 Videos Grid */}
         </CardContent>
       </Card>
     </Box>

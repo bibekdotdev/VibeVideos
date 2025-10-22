@@ -9,11 +9,16 @@ import {
   InputLabel,
   FormControl,
   LinearProgress,
+  CircularProgress,
+  Box,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../lib/asios";
 
 const UploadVideo = () => {
+  const navigate = useNavigate();
   const [videoFile, setVideoFile] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [title, setTitle] = useState("");
@@ -49,16 +54,12 @@ const UploadVideo = () => {
         withCredentials: true,
       });
 
-      alert("Video uploaded successfully!");
-      console.log(response.data);
+      console.log("Video uploaded:", response.data);
 
-      // Reset form
-      setVideoFile(null);
-      setThumbnailFile(null);
-      setTitle("");
-      setDesc("");
-      setVisibility("public");
-      setProgress(0);
+      // ✅ Show success animation for 1s, then redirect
+      setTimeout(() => {
+        navigate("/channelmanager");
+      }, 1000);
     } catch (err) {
       console.error(err);
       alert("Upload failed!");
@@ -238,14 +239,23 @@ const UploadVideo = () => {
 
           {/* Progress Bar */}
           {uploading && (
-            <LinearProgress
-              variant="determinate"
-              value={progress}
-              sx={{
-                "& .MuiLinearProgress-bar": { backgroundColor: "red" },
-                backgroundColor: "gray",
-              }}
-            />
+            <Box className="mt-2 w-full">
+              <LinearProgress
+                variant="determinate"
+                value={progress}
+                sx={{
+                  "& .MuiLinearProgress-bar": { backgroundColor: "red" },
+                  backgroundColor: "gray",
+                  height: 8,
+                  borderRadius: 4,
+                }}
+              />
+
+              {/* Optional Spinner Overlay */}
+              <Box className="absolute inset-0 flex items-center justify-center">
+                <CircularProgress style={{ color: "red" }} />
+              </Box>
+            </Box>
           )}
         </CardContent>
       </Card>

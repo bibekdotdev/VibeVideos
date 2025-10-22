@@ -99,10 +99,13 @@ router.get("/getVideo/:id", protectedRoute, async (req, res) => {
       return res.status(400).json({ message: "Invalid video ID" });
     }
     let istrue = false;
-    const savedDocs = await SavedVideo.find({
-      savedVideos: { $in: [req.user.id] },
+    const isSaved = await SavedVideo.findOne({
+      savedBy: req.user.id,
+      savedVideos: { $in: [id] },
     });
-    if (savedDocs) {
+    console.log("bibek jana ", isSaved);
+
+    if (isSaved) {
       istrue = true;
     }
     const videoData = await Video.aggregate([
@@ -459,28 +462,96 @@ router.get(
     try {
       const { videoId } = req.params;
 
+      if (!mongoose.Types.ObjectId.isValid(videoId)) {
+        return res.status(400).json({ message: "Invalid video ID" });
+      }
+
+      // Find the current video
       const currentVideo = await Video.findById(videoId);
       if (!currentVideo) {
         return res.status(404).json({ message: "Video not found" });
       }
 
-      const recommended = await Video.find({
-        _id: { $ne: currentVideo._id },
-        visibility: "public",
-        $or: [
-          { title: { $regex: currentVideo.title, $options: "i" } },
-          { description: { $regex: currentVideo.description, $options: "i" } },
-        ],
-      }).sort({ uploadedAt: -1 });
+      // Get recommended videos based on title/description, excluding current video
+      const recommendedVideos = await Video.aggregate([
+        { $match: { _id: { $ne: currentVideo._id }, visibility: "public" } },
+        {
+          $match: {
+            $or: [
+              { title: { $regex: currentVideo.title, $options: "i" } },
+              {
+                description: {
+                  $regex: currentVideo.description,
+                  $options: "i",
+                },
+              },
+            ],
+          },
+        },
+        {
+          $lookup: {
+            from: "channels",
+            localField: "uploadedBy",
+            foreignField: "owner",
+            as: "detailsOfChannel",
+          },
+        },
+        { $sort: { uploadedAt: -1 } },
+      ]);
 
-      const allVideos = await Video.find({
-        _id: { $ne: currentVideo._id },
-        visibility: "public",
-      }).sort({ uploadedAt: -1 });
-      console.log([...recommended, ...allVideos]);
-      return res.json([...recommended, ...allVideos]);
+      // Fallback: all public videos (excluding current video)
+      const otherVideos = await Video.aggregate([
+        { $match: { _id: { $ne: currentVideo._id }, visibility: "public" } },
+        {
+          $lookup: {
+            from: "channels",
+            localField: "uploadedBy",
+            foreignField: "owner",
+            as: "detailsOfChannel",
+          },
+        },
+        { $sort: { uploadedAt: -1 } },
+      ]);
+
+      const combinedVideos = [...recommendedVideos, ...otherVideos];
+
+      // Add user-specific data
+      const userId = req.user.id.toString();
+      const videosWithUserData = combinedVideos.map((video) => {
+        // isSaved
+        const isSaved = video.savedBy?.includes(userId) || false;
+
+        // userReaction
+        let userReaction = null;
+        if (video.likes?.map((id) => id.toString()).includes(userId)) {
+          userReaction = "like";
+        } else if (
+          video.dislikes?.map((id) => id.toString()).includes(userId)
+        ) {
+          userReaction = "dislike";
+        }
+
+        // isSubscribed
+        const channel = video.detailsOfChannel?.[0];
+        let isSubscribed = false;
+        if (channel) {
+          isSubscribed = channel.subscribers
+            ?.map((id) => id.toString())
+            .includes(userId);
+        }
+
+        return {
+          ...video,
+          isSaved,
+          userReaction,
+          isSubscribed,
+        };
+      });
+
+      res.status(200).json(videosWithUserData);
     } catch (error) {
-      res.status(500).json({ message: error.message });
+      console.error("Error fetching recommended videos:", error);
+      res.status(500).json({ message: "Server error" });
     }
   }
 );

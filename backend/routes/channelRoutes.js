@@ -169,8 +169,6 @@ router.get("/subscriptions", protectedRoute, async (req, res) => {
       };
     });
 
-    console.log(v);
-
     res.status(200).json({ subscriptions: subscriptions, videos: v });
   } catch (error) {
     console.error("Error fetching subscriptions:", error);

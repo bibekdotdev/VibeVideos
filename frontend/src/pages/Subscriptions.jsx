@@ -1,24 +1,40 @@
 import React, { useEffect, useState } from "react";
 import manageChannelStore from "../store/manageChannelStore";
 import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
 
 const Subscriptions = () => {
   const { getsubscriptionsdetails } = manageChannelStore();
-  const [subscriptions, setSubscriptions] = useState([]);
+  const [subscriptions, setSubscriptions] = useState({
+    subscriptions: [],
+    videos: [],
+  });
   const [hoveredVideo, setHoveredVideo] = useState(null); // Track which video is hovered
+  const [loading, setLoading] = useState(true); // Loading state
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await getsubscriptionsdetails();
-        setSubscriptions(data);
+        setSubscriptions(data || { subscriptions: [], videos: [] });
       } catch (error) {
         console.error("Error fetching subscriptions:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [getsubscriptionsdetails]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black text-white">
+        <CircularProgress style={{ color: "red" }} />
+      </div>
+    );
+  }
 
   // Collect all videos from all subscribed channels
   const allVideos = subscriptions.videos || [];

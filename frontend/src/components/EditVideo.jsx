@@ -8,10 +8,13 @@ import {
   InputLabel,
   FormControl,
   LinearProgress,
+  CircularProgress,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import manageChannelStore from "../store/manageChannelStore";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EditVideo = () => {
   const { id } = useParams();
@@ -27,11 +30,13 @@ const EditVideo = () => {
   const [existingThumbnailUrl, setExistingThumbnailUrl] = useState("");
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Fetch video details from store
   useEffect(() => {
     const fetchVideo = async () => {
       try {
+        setLoading(true);
         const video = await myVideo(id);
         if (video) {
           setTitle(video.title);
@@ -41,12 +46,15 @@ const EditVideo = () => {
           setExistingThumbnailUrl(video.thumbnailUrl || "");
           setThumbnailPreview(video.thumbnailUrl || "");
         } else {
-          alert("Video not found.");
-          navigate("/my-channel");
+          toast.error("Video not found.");
+          navigate("/channel-manager");
         }
       } catch (err) {
         console.error(err);
-        alert("Failed to fetch video data.");
+        toast.error("Failed to fetch video data.");
+        navigate("/channel-manager");
+      } finally {
+        setLoading(false);
       }
     };
     fetchVideo();
@@ -62,7 +70,7 @@ const EditVideo = () => {
   };
 
   const handleUpdate = async () => {
-    if (!title) return alert("Title is required");
+    if (!title) return toast.error("Title is required");
     setUploading(true);
     setProgress(0);
 
@@ -75,16 +83,24 @@ const EditVideo = () => {
 
       await updateVideoInfo(id, formData, (percent) => setProgress(percent));
 
-      setUploading(false);
-      setProgress(100);
-      alert("Video updated successfully!");
-      navigate("/my-channel");
+      toast.success("Video updated successfully!");
+      navigate("/channelmanager");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to update video.");
+    } finally {
       setUploading(false);
-      alert("Failed to update video.");
+      setProgress(100);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black text-white">
+        <CircularProgress style={{ color: "red" }} />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full min-h-screen bg-black text-white flex flex-col items-center p-4 sm:p-8">
@@ -222,9 +238,19 @@ const EditVideo = () => {
               fontWeight: "bold",
               py: 1,
               fontSize: "0.8rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {uploading ? "Updating..." : "Update Video"}
+            {uploading ? (
+              <>
+                <CircularProgress size={20} sx={{ color: "white", mr: 1 }} />
+                Updating...
+              </>
+            ) : (
+              "Update Video"
+            )}
           </Button>
 
           {/* Progress Bar */}
@@ -235,6 +261,7 @@ const EditVideo = () => {
               sx={{
                 "& .MuiLinearProgress-bar": { backgroundColor: "red" },
                 backgroundColor: "gray",
+                mt: 2,
               }}
             />
           )}

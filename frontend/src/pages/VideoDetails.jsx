@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   ThumbsUp,
   ThumbsDown,
@@ -20,6 +20,7 @@ import useVideoStore from "../store/videoStore";
 
 const VideoDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const {
     getVideoDetailsById,
     toggleReaction,
@@ -50,7 +51,7 @@ const VideoDetails = () => {
       setSubCount(
         fetchedVideo?.detailsOfChannel?.[0]?.subscribers?.length ?? 0
       );
-      console.log(fetchedVideo.istrue);
+      console.log("is saved", fetchedVideo.istrue);
       setIsSaved(fetchedVideo?.istrue);
 
       setLoading(false);
@@ -268,10 +269,12 @@ const VideoDetails = () => {
         {/* Channel Info */}
         {channel && (
           <div className="mt-4 flex items-center gap-4 p-4 bg-gray-900 rounded-xl">
+            {/* Channel Image with Redirection */}
             <img
               src={channel.logoUrl}
               alt={channel.name}
-              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-gray-700"
+              onClick={() => navigate(`/channel/${channel._id}`)}
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover border-2 border-gray-700 cursor-pointer hover:opacity-80 transition"
             />
             <div className="flex-1 flex flex-col min-w-0 max-w-190">
               <p

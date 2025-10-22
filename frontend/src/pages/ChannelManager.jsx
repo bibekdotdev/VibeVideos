@@ -41,18 +41,23 @@ const ChannelManager = () => {
     fetchChannel();
   }, [myChannel, navigate]);
 
+  // 🌟 Animated Loader while fetching data
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-white">
-        <p>Loading...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
+        <div className="relative w-20 h-20">
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-t-transparent border-white rounded-full animate-spin"></div>
+          <div className="absolute top-0 left-0 w-full h-full border-4 border-t-transparent border-gray-500 rounded-full animate-ping"></div>
+        </div>
+        <p className="mt-6 text-lg font-semibold tracking-widest animate-pulse">
+          Loading your channel...
+        </p>
       </div>
     );
   }
 
   return (
-    <div >
-      {channel ? <MyChannel channel={channel} /> : <CreateChannel />}
-    </div>
+    <div>{channel ? <MyChannel channel={channel} /> : <CreateChannel />}</div>
   );
 };
 
