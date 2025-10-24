@@ -9,8 +9,8 @@ const Subscriptions = () => {
     subscriptions: [],
     videos: [],
   });
-  const [hoveredVideo, setHoveredVideo] = useState(null); // Track which video is hovered
-  const [loading, setLoading] = useState(true); // Loading state
+  const [hoveredVideo, setHoveredVideo] = useState(null); 
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const Subscriptions = () => {
     );
   }
 
-  // Collect all videos from all subscribed channels
+ 
   const allVideos = subscriptions.videos || [];
 
   return (
@@ -45,7 +45,7 @@ const Subscriptions = () => {
         Your Subscriptions
       </h1>
 
-      {/* Top Bar — Channel Logos */}
+     
       {subscriptions.subscriptions && subscriptions.subscriptions.length > 0 ? (
         <>
           <div className="flex overflow-x-auto space-x-6 mb-10 pb-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
@@ -67,7 +67,7 @@ const Subscriptions = () => {
             ))}
           </div>
 
-          {/* All Videos from Subscribed Channels */}
+         
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {allVideos.length > 0 ? (
               allVideos.map((video) => {
@@ -86,7 +86,7 @@ const Subscriptions = () => {
                     onMouseEnter={() => setHoveredVideo(video._id)}
                     onMouseLeave={() => setHoveredVideo(null)}
                   >
-                    {/* Thumbnail or Preview Video */}
+                   
                     <div className="relative w-full h-48 bg-black">
                       {hoveredVideo === video._id ? (
                         <video
@@ -106,20 +106,20 @@ const Subscriptions = () => {
                       )}
                     </div>
 
-                    {/* Video Info */}
+                  
                     <div className="p-4 flex gap-3">
                       <img
                         src={channel.logoUrl}
                         alt={channel.name}
                         className="w-10 h-10 rounded-full object-cover cursor-pointer"
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent video click
+                          e.stopPropagation(); 
                           navigate(`/channel/${channel._id}`);
                         }}
                       />
 
                       <div className="flex-1 overflow-hidden">
-                        {/* Title */}
+                       
                         <h3
                           className="text-md font-semibold text-white 
                           line-clamp-1 overflow-hidden text-ellipsis"
@@ -128,7 +128,7 @@ const Subscriptions = () => {
                           {video.title}
                         </h3>
 
-                        {/* Description */}
+                    
                         <p
                           className="text-gray-400 text-sm mt-1 
                           line-clamp-2 overflow-hidden text-ellipsis"

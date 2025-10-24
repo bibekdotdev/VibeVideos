@@ -10,7 +10,7 @@ const ChannelManager = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch my channel on mount
+ 
   useEffect(() => {
     const fetchChannel = async () => {
       try {
@@ -18,7 +18,7 @@ const ChannelManager = () => {
         console.log("MyChannel Response:", res);
 
         if (res.success && res.channel) {
-          // ✅ Channel exists → show MyChannel
+      
           setChannel({
             id: res.channel._id,
             name: res.channel.name,
@@ -28,7 +28,7 @@ const ChannelManager = () => {
             subscriberCount: res.channel.subscriberCount,
           });
         } else {
-          // ❌ No channel → redirect to CreateChannel
+          
           navigate("/create-channel");
         }
       } catch (error) {
@@ -41,7 +41,7 @@ const ChannelManager = () => {
     fetchChannel();
   }, [myChannel, navigate]);
 
-  // 🌟 Animated Loader while fetching data
+  
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">

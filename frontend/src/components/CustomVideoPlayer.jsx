@@ -17,7 +17,7 @@ const CustomVideoPlayer = ({ video }) => {
   const [showControls, setShowControls] = useState(true);
   const [lastTap, setLastTap] = useState(0);
 
-  // Detect small screen
+
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   useEffect(() => {
     const handleResize = () => setIsSmallScreen(window.innerWidth < 640);
@@ -26,7 +26,7 @@ const CustomVideoPlayer = ({ video }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Adjust icon size
+
   useEffect(() => {
     const updateIconSize = () => {
       const width = window.innerWidth;
@@ -39,7 +39,7 @@ const CustomVideoPlayer = ({ video }) => {
     return () => window.removeEventListener("resize", updateIconSize);
   }, []);
 
-  // Auto-hide controls
+
   const resetControlsTimer = () => {
     setShowControls(true);
     if (hideControlsTimeout.current) clearTimeout(hideControlsTimeout.current);
@@ -131,7 +131,7 @@ const CustomVideoPlayer = ({ video }) => {
     resetControlsTimer();
   };
 
-  // Skip 10s
+  
   const handleSkip = (x) => {
     if (!videoRef.current || !containerRef.current) return;
     const width = containerRef.current.clientWidth;
@@ -155,12 +155,12 @@ const CustomVideoPlayer = ({ video }) => {
     setTimeout(() => setSkipIndicator(null), 500);
   };
 
-  // Handle container tap (double-tap skip)
+ 
   const handleContainerTap = (e) => {
     const currentTime = new Date().getTime();
     const tapGap = currentTime - lastTap;
 
-    // Only skip if double tap
+
     if (tapGap < 300 && tapGap > 0) {
       const x = e.touches ? e.touches[0].clientX : e.clientX;
       handleSkip(x);
@@ -197,7 +197,7 @@ const CustomVideoPlayer = ({ video }) => {
         <source src={video.videoUrl} type="video/webm" />
       </video>
 
-      {/* Skip animation */}
+    
       {skipIndicator === "left" && (
         <div
           className="absolute left-10 rounded-full p-3 pointer-events-none select-none opacity-90 animate-ping flex items-center justify-center"
@@ -215,7 +215,7 @@ const CustomVideoPlayer = ({ video }) => {
         </div>
       )}
 
-      {/* Play/Pause Icon */}
+     
       <div
         className="absolute p-5 rounded-full pointer-events-auto select-none opacity-90 flex items-center justify-center cursor-pointer animate-pulse"
         style={{ fontSize: iconSize }}
@@ -224,7 +224,7 @@ const CustomVideoPlayer = ({ video }) => {
         {isPlaying ? showControls && <FaPause /> : <FaPlay />}
       </div>
 
-      {/* Controls */}
+    
       {showControls && (
         <div
           className="absolute bottom-0 left-0 right-0 bg-black/80 p-2 sm:p-3 flex flex-col space-y-1 sm:space-y-2 transition-opacity duration-300"

@@ -53,7 +53,7 @@ const SavedVideos = () => {
             onMouseLeave={() => setHoveredVideo(null)}
             onClick={() => navigate(`/video/${video._id}`)}
           >
-            {/* Video Thumbnail / Hover */}
+         
             <div className="relative w-full h-60">
               {hoveredVideo === video._id ? (
                 <>
@@ -77,15 +77,15 @@ const SavedVideos = () => {
               )}
             </div>
 
-            {/* Video Info */}
+            
             <div className="flex p-3 gap-3">
-              {/* Channel Logo */}
+         
               <img
                 src={video.detailsOfChannel?.logoUrl || "/default-logo.png"}
                 alt={video.detailsOfChannel?.name || "Channel Logo"}
                 className="w-12 h-12 rounded-full object-cover flex-shrink-0 cursor-pointer"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent card click
+                  e.stopPropagation(); 
                   navigate(`/channel/${video.detailsOfChannel?._id}`);
                 }}
               />

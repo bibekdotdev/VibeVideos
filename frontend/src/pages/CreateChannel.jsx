@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Added for navigation
-import { Upload, PlusCircle, Image, Camera } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Upload, PlusCircle, Image, Camera, Loader2 } from "lucide-react"; 
 import {
   Card,
   CardContent,
@@ -9,22 +9,25 @@ import {
   Typography,
   Box,
   Avatar,
+  CircularProgress,
 } from "@mui/material";
 import manageChannelStore from "../store/manageChannelStore";
 
 const CreateChannel = ({ onCreated = () => {} }) => {
-  // ✅ Default function to avoid error
   const { createChannel } = manageChannelStore();
-  const navigate = useNavigate(); // ✅ Initialized navigate
+  const navigate = useNavigate();
 
   const [channelName, setChannelName] = useState("");
   const [channelDesc, setChannelDesc] = useState("");
   const [channelLogo, setChannelLogo] = useState(null);
   const [channelBanner, setChannelBanner] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleCreateChannel = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true); 
+
       const formData = new FormData();
       formData.append("name", channelName);
       formData.append("desc", channelDesc);
@@ -43,15 +46,27 @@ const CreateChannel = ({ onCreated = () => {} }) => {
           banner: res.channel.bannerUrl,
         });
 
-        navigate("/my-channel"); // ✅ Redirect after success
+       
+        setTimeout(() => navigate("/my-channel"), 800);
       }
     } catch (error) {
       console.error("Error creating channel:", error);
+      setLoading(false);
     }
   };
 
   return (
-    <Box className="flex justify-center items-center py-10 px-4 bg-black min-h-screen p-4 ">
+    <Box className="relative flex justify-center items-center py-10 px-4 bg-black min-h-screen p-4">
+    
+      {loading && (
+        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center z-50">
+          <Loader2 className="w-12 h-12 text-red-500 animate-spin mb-4" />
+          <Typography variant="h6" className="text-white font-semibold">
+            Creating your channel...
+          </Typography>
+        </div>
+      )}
+
       <Card
         sx={{
           maxWidth: 700,
@@ -62,9 +77,11 @@ const CreateChannel = ({ onCreated = () => {} }) => {
           color: "white",
           boxShadow: "0 8px 28px rgba(0,0,0,0.8)",
           overflow: "hidden",
+          opacity: loading ? 0.5 : 1, 
+          pointerEvents: loading ? "none" : "auto", 
         }}
       >
-        {/* 🔹 Banner Upload */}
+       
         <Box
           component="label"
           sx={{
@@ -92,7 +109,6 @@ const CreateChannel = ({ onCreated = () => {} }) => {
             </Box>
           )}
 
-          {/* Hover overlay */}
           <Box className="overlay absolute inset-0 flex items-center justify-center bg-black/50 text-white transition-opacity opacity-0">
             <Camera size={40} />
           </Box>
@@ -106,7 +122,7 @@ const CreateChannel = ({ onCreated = () => {} }) => {
         </Box>
 
         <CardContent>
-          {/* 🔹 Logo Upload */}
+          
           <Box
             display="flex"
             flexDirection="column"
@@ -136,7 +152,6 @@ const CreateChannel = ({ onCreated = () => {} }) => {
                 {!channelLogo && <Image size={32} />}
               </Avatar>
 
-              {/* Hover overlay */}
               <Box className="overlay absolute inset-0 flex items-center justify-center bg-black/50 text-white transition-opacity opacity-0">
                 <Camera size={28} />
               </Box>
@@ -150,7 +165,7 @@ const CreateChannel = ({ onCreated = () => {} }) => {
             </Box>
           </Box>
 
-          {/* 🔹 Title */}
+        
           <Box display="flex" alignItems="center" gap={1} mt={4} mb={3}>
             <PlusCircle size={26} className="text-red-500" />
             <Typography variant="h5" fontWeight="bold">
@@ -158,9 +173,7 @@ const CreateChannel = ({ onCreated = () => {} }) => {
             </Typography>
           </Box>
 
-          {/* 🔹 Form */}
           <form onSubmit={handleCreateChannel} className="space-y-5">
-            {/* Channel Name */}
             <TextField
               fullWidth
               label="Channel Name"
@@ -180,8 +193,6 @@ const CreateChannel = ({ onCreated = () => {} }) => {
             />
             <br />
             <br />
-
-            {/* Channel Description */}
             <TextField
               fullWidth
               label="Channel Description"
@@ -202,7 +213,6 @@ const CreateChannel = ({ onCreated = () => {} }) => {
               }}
             />
 
-            {/* Submit Button */}
             <Button
               type="submit"
               fullWidth

@@ -7,11 +7,10 @@ const CommentSection = ({ videoId }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showComments, setShowComments] = useState(false); // For screens <= 1024px
+  const [showComments, setShowComments] = useState(false);
   const { addcomment, fetchcomment } = useVideoStore();
   const navigate = useNavigate();
 
-  // Fetch comments
   useEffect(() => {
     const loadComments = async () => {
       try {
@@ -62,11 +61,9 @@ const CommentSection = ({ videoId }) => {
 
   return (
     <div className="mt-6 w-full mx-auto px-2">
-      {/* Comments Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-bold text-lg">Comments ({comments.length})</h3>
 
-        {/* Dropdown toggle for screens <= 1024px */}
         <button
           className="lg:hidden flex items-center gap-1 text-red-600 font-semibold"
           onClick={() => setShowComments(!showComments)}
@@ -83,7 +80,6 @@ const CommentSection = ({ videoId }) => {
         </button>
       </div>
 
-      {/* Input Box */}
       <div className="flex flex-col sm:flex-row gap-2 mb-6">
         <input
           type="text"
@@ -101,7 +97,6 @@ const CommentSection = ({ videoId }) => {
         </button>
       </div>
 
-      {/* Comments List */}
       <ul
         className={`space-y-4 transition-all duration-300 ease-in-out ${
           showComments
@@ -116,7 +111,6 @@ const CommentSection = ({ videoId }) => {
               className="flex gap-3 border-b pb-3 last:border-b-0 break-words"
               style={{ overflowWrap: "anywhere" }}
             >
-              {/* Avatar */}
               {c.author.logoUrl ? (
                 <img
                   src={c.author.logoUrl}
@@ -128,7 +122,6 @@ const CommentSection = ({ videoId }) => {
                 <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
               )}
 
-              {/* Comment Content */}
               <div className="flex-1">
                 <p className="font-semibold">{c.author.name}</p>
                 <p

@@ -42,10 +42,10 @@ const ChannelDetails = () => {
     try {
       const res = await toggleSubscribe(channel._id);
 
-      // Toggle subscribed state
+  
       setSubscribed(res.isSubscribed);
 
-      // Update subscriber count
+   
       setChannel((prev) => ({
         ...prev,
         subscriberCount: res.isSubscribed
@@ -73,7 +73,7 @@ const ChannelDetails = () => {
 
   return (
     <Box className="bg-black min-h-screen text-white">
-      {/* Banner Section */}
+    
       <Box
         className="relative w-full bg-gray-900"
         sx={{ height: { xs: 60, sm: 120, md: 240 } }}
@@ -91,7 +91,7 @@ const ChannelDetails = () => {
         )}
       </Box>
 
-      {/* Channel Header */}
+     
       <Box className="flex flex-col sm:flex-row items-start sm:items-end justify-between px-6 py-6 border-b border-gray-800 space-y-4 sm:space-y-0 sm:space-x-6">
         <Box className="flex items-center space-x-4 w-full">
           <Avatar
@@ -100,7 +100,7 @@ const ChannelDetails = () => {
             sx={{ width: 100, height: 100, border: "3px solid white" }}
           />
           <Box className="flex-1 min-w-0">
-            {/* Channel Name */}
+           
             <Typography
               variant="h6"
               className="text-base sm:text-lg md:text-xl font-semibold truncate"
@@ -110,7 +110,7 @@ const ChannelDetails = () => {
               {channel.name}
             </Typography>
 
-            {/* Channel Description */}
+          
             <Typography
               variant="body2"
               className="text-gray-400 text-sm sm:text-base line-clamp-2"
@@ -120,12 +120,12 @@ const ChannelDetails = () => {
               {channel.desc || "No description provided"}
             </Typography>
 
-            {/* Subscriber Count */}
+        
             <Typography variant="body2" className="text-gray-500 mt-1">
               {channel.subscriberCount || 0} subscribers
             </Typography>
 
-            {/* Subscribe Button (works on all screen sizes) */}
+           
             <button
               onClick={handleSubscribeClick}
               onMouseEnter={() => setHovered(true)}
@@ -148,7 +148,7 @@ const ChannelDetails = () => {
         </Box>
       </Box>
 
-      {/* Videos Section */}
+    
       <Box className="px-6 py-8">
         <Typography variant="h6" className="text-white mb-6 font-semibold">
           Videos
@@ -162,7 +162,7 @@ const ChannelDetails = () => {
                 className="bg-gray-900 overflow-hidden group cursor-pointer hover:shadow-red-500/40 transition"
                 onClick={() => navigate(`/video/${video._id}`)}
               >
-                {/* Thumbnail with hover video */}
+                
                 <div className="relative w-full h-48">
                   <img
                     src={video.thumbnailUrl}
@@ -178,7 +178,7 @@ const ChannelDetails = () => {
                   />
                 </div>
 
-                {/* Video Info */}
+                
                 <div className="p-4">
                   <h3 className="font-bold text-sm sm:text-base truncate text-gray-200 group-hover:text-white transition">
                     {video.title}

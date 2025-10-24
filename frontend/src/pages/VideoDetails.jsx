@@ -70,7 +70,7 @@ const VideoDetails = () => {
       await toggleSubscribe(channelId);
     } catch (err) {
       console.error("Subscription error:", err);
-      setSubscribed(subscribed); // revert on error
+      setSubscribed(subscribed); 
       setSubCount((prev) => (subscribed ? prev + 1 : prev - 1));
     }
   };
@@ -146,12 +146,12 @@ const VideoDetails = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-6 md:px-12 py-4 bg-black min-h-screen text-white relative">
-      {/* Left Section */}
+     
       <div className="flex-1 flex flex-col gap-6 bg-black">
-        {/* Video Player */}
+      
         <CustomVideoPlayer video={video} className="w-full" />
 
-        {/* Video Info */}
+        
         <div className="flex flex-col gap-1">
           <h1 className="text-sm sm:text-sm md:text-base font-bold break-words break-all whitespace-normal">
             {video.title}
@@ -161,7 +161,7 @@ const VideoDetails = () => {
           </p>
         </div>
 
-        {/* Like / Dislike / Save / Share */}
+        
         <div className="flex flex-wrap gap-3 mt-3">
           <button
             onClick={() => handleReaction("like")}
@@ -185,7 +185,7 @@ const VideoDetails = () => {
             <ThumbsDown size={16} /> {video.dislikes ?? 0}
           </button>
 
-          {/* Save Button */}
+         
           <button
             onClick={handleSaveVideo}
             className={`flex items-center gap-1 px-3 py-2 rounded-full text-xs sm:text-sm md:text-sm font-medium ${
@@ -198,7 +198,7 @@ const VideoDetails = () => {
             {isSaved ? "Saved" : "Save"}
           </button>
 
-          {/* Share Button with Popup */}
+       
           <div className="relative">
             <button
               onClick={handleShareVideo}
@@ -266,10 +266,10 @@ const VideoDetails = () => {
           </div>
         </div>
 
-        {/* Channel Info */}
+       
         {channel && (
           <div className="mt-4 flex items-center gap-4 p-4 bg-gray-900 rounded-xl">
-            {/* Channel Image with Redirection */}
+          
             <img
               src={channel.logoUrl}
               alt={channel.name}
@@ -315,11 +315,11 @@ const VideoDetails = () => {
           </div>
         )}
 
-        {/* Comments */}
+       
         <CommentSection videoId={video._id} />
       </div>
 
-      {/* Right Section */}
+     
       <RecommendedVideos videoId={video._id} />
     </div>
   );

@@ -24,13 +24,13 @@ const Layout = () => {
 
   const isHome = location.pathname === "/" || location.pathname === "/home";
 
-  // single function for both search and filter
+ 
   const handleSearchOrFilter = (value) => {
     if (value) {
-      // If value is text, treat as search
+      
       searchVideos(value);
     } else {
-      // If empty, just show all videos
+     
       searchVideos("");
     }
   };
@@ -39,7 +39,7 @@ const Layout = () => {
     <div className="flex flex-col min-h-screen bg-black text-white">
       <Nav />
 
-      {/* Top section */}
+    
       <div className="flex flex-col px-4 py-3 bg-black shadow-md sticky top-0 z-40 border-b border-gray-700 gap-3">
         <div className="flex items-center gap-3 ">
           <IconButton onClick={toggleDrawer(true)} sx={{ color: "white" }}>
@@ -79,7 +79,7 @@ const Layout = () => {
           </div>
         </div>
 
-        {/* Search bar */}
+       
         {isHome && (
           <div className="flex items-center bg-[#111] border border-red-600 rounded-full overflow-hidden focus-within:ring-2 focus-within:ring-red-500 transition w-full">
             <input
@@ -93,7 +93,7 @@ const Layout = () => {
               className="w-full bg-transparent text-white px-4 py-2 outline-none placeholder-gray-400 text-sm"
               onKeyDown={(e) =>
                 e.key === "Enter" && handleSearchOrFilter(e.target.value)
-              } // search on Enter
+              } 
             />
             <button
               onClick={() => handleSearchOrFilter(searchText)}

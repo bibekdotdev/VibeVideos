@@ -1,8 +1,6 @@
-// models/Comment.js
 const mongoose = require("mongoose");
 const commentSchema = new mongoose.Schema(
   {
-   
     commentFor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Video",

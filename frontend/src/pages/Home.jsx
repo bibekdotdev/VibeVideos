@@ -44,7 +44,7 @@ const Home = () => {
 
   return (
     <div className="bg-black min-h-screen text-white w-full">
-      {/* Loading */}
+    
       {isLoading ? (
         <div className="flex justify-center items-center min-h-screen w-full">
           <div className="flex flex-col items-center gap-3">
@@ -66,7 +66,7 @@ const Home = () => {
               onMouseLeave={() => setHoveredVideo(null)}
               onClick={() => handleVideoClick(video._id)}
             >
-              {/* Thumbnail / Hover Video */}
+            
               <div className="h-48 sm:h-52 lg:h-56 bg-gray-800 overflow-hidden relative w-full">
                 {hoveredVideo === video._id ? (
                   <video
@@ -85,7 +85,7 @@ const Home = () => {
                 )}
               </div>
 
-              {/* Video Info */}
+            
               <div className="p-3">
                 <h3 className="font-semibold text-lg truncate text-white">
                   {video.title}
@@ -94,7 +94,7 @@ const Home = () => {
                   {video.description}
                 </p>
 
-                {/* Channel Info */}
+               
                 {video.detailsOfChannel && (
                   <div className="flex items-center gap-2 mt-2">
                     <img

@@ -37,7 +37,7 @@ const RecommendedVideos = ({ videoId }) => {
                 onClick={() => navigate(`/video/${video._id}`)}
                 className="flex flex-col lg:flex-row gap-4 cursor-pointer hover:bg-gray-800 p-3 rounded-lg transition"
               >
-                {/* Video Thumbnail */}
+              
                 <div className="w-full lg:w-40 h-[250px] sm:h-[250px] lg:h-24 bg-gray-700 rounded-lg overflow-hidden flex-shrink-0">
                   <img
                     src={video.thumbnailUrl}
@@ -46,7 +46,7 @@ const RecommendedVideos = ({ videoId }) => {
                   />
                 </div>
 
-                {/* Video Info */}
+               
                 <div className="flex flex-col  overflow-hidden flex-1">
                   <div className="flex items-center gap-2 mt-1">
                     <img
@@ -54,7 +54,7 @@ const RecommendedVideos = ({ videoId }) => {
                       alt={channel?.name || "Channel"}
                       className="w-6 h-6 rounded-full object-cover cursor-pointer"
                       onClick={(e) => {
-                        e.stopPropagation(); // prevent opening video
+                        e.stopPropagation(); 
                         navigate(`/channel/${channel?._id}`);
                       }}
                     />

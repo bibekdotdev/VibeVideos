@@ -351,7 +351,7 @@ router.post("/:videoId/addcomment", protectedRoute, async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found." });
     }
-    // Check if comment doc already exists for this video
+
     let commentDoc = await Comment.findOne({ commentFor: id });
     if (commentDoc) {
       commentDoc.commentsData.push({ user, text });
@@ -377,7 +377,6 @@ router.get("/:videoId/fetchcomment", protectedRoute, async (req, res) => {
   try {
     const { videoId } = req.params;
 
-    // Find the comment document for the video
     const commentDoc = await Comment.findOne({ commentFor: videoId });
 
     if (!commentDoc || !commentDoc.commentsData.length) {
@@ -389,7 +388,6 @@ router.get("/:videoId/fetchcomment", protectedRoute, async (req, res) => {
         let authorInfo = {};
 
         if (comment.user) {
-          // First, try to find the channel
           const channel = await Channel.findOne({ owner: comment.user });
 
           if (channel) {
@@ -466,13 +464,11 @@ router.get(
         return res.status(400).json({ message: "Invalid video ID" });
       }
 
-      // Find the current video
       const currentVideo = await Video.findById(videoId);
       if (!currentVideo) {
         return res.status(404).json({ message: "Video not found" });
       }
 
-      // Get recommended videos based on title/description, excluding current video
       const recommendedVideos = await Video.aggregate([
         { $match: { _id: { $ne: currentVideo._id }, visibility: "public" } },
         {
@@ -499,7 +495,6 @@ router.get(
         { $sort: { uploadedAt: -1 } },
       ]);
 
-      // Fallback: all public videos (excluding current video)
       const otherVideos = await Video.aggregate([
         { $match: { _id: { $ne: currentVideo._id }, visibility: "public" } },
         {
@@ -515,13 +510,10 @@ router.get(
 
       const combinedVideos = [...recommendedVideos, ...otherVideos];
 
-      // Add user-specific data
       const userId = req.user.id.toString();
       const videosWithUserData = combinedVideos.map((video) => {
-        // isSaved
         const isSaved = video.savedBy?.includes(userId) || false;
 
-        // userReaction
         let userReaction = null;
         if (video.likes?.map((id) => id.toString()).includes(userId)) {
           userReaction = "like";
@@ -531,7 +523,6 @@ router.get(
           userReaction = "dislike";
         }
 
-        // isSubscribed
         const channel = video.detailsOfChannel?.[0];
         let isSubscribed = false;
         if (channel) {
@@ -578,9 +569,11 @@ router.get("/:id", protectedRoute, async (req, res) => {
 router.get("/home/fetchallvideos", protectedRoute, async (req, res) => {
   try {
     console.log("bibek");
-    const videos = await Video.aggregate([
-      { $sample: { size: await Video.countDocuments() } },
+    const totalCount = await Video.countDocuments({ visibility: "public" });
 
+    const videos = await Video.aggregate([
+      { $match: { visibility: "public" } },
+      { $sample: { size: totalCount } },
       {
         $lookup: {
           from: "channels",
@@ -589,14 +582,12 @@ router.get("/home/fetchallvideos", protectedRoute, async (req, res) => {
           as: "detailsOfChannel",
         },
       },
-
       {
         $unwind: {
           path: "$detailsOfChannel",
           preserveNullAndEmptyArrays: true,
         },
       },
-
       {
         $project: {
           _id: 1,
@@ -604,7 +595,6 @@ router.get("/home/fetchallvideos", protectedRoute, async (req, res) => {
           description: 1,
           videoUrl: 1,
           thumbnailUrl: 1,
-
           likes: 1,
           dislikes: 1,
           uploadedAt: 1,
@@ -646,6 +636,7 @@ router.get("/searchvideos/:value", protectedRoute, async (req, res) => {
           },
         },
       },
+      { $match: { visibility: "public" } },
       {
         $lookup: {
           from: "channels",

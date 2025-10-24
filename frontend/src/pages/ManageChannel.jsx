@@ -29,7 +29,7 @@ const ManageChannel = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
-  // ✅ Fetch current channel data
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,7 +55,7 @@ const ManageChannel = () => {
     fetchData();
   }, [myChannel, getChannelVideos]);
 
-  // ✅ Handle update
+
   const handleUpdateChannel = async (e) => {
     e.preventDefault();
     setUpdating(true);
@@ -104,7 +104,7 @@ const ManageChannel = () => {
           overflow: "hidden",
         }}
       >
-        {/* 🔹 Banner Upload */}
+        
         <Box
           component="label"
           sx={{
@@ -151,7 +151,7 @@ const ManageChannel = () => {
         </Box>
 
         <CardContent>
-          {/* 🔹 Logo Upload */}
+         
           <Box
             display="flex"
             flexDirection="column"
@@ -193,7 +193,7 @@ const ManageChannel = () => {
             </Box>
           </Box>
 
-          {/* 🔹 Title */}
+          
           <Box display="flex" alignItems="center" gap={1} mt={4} mb={3}>
             <Settings size={26} className="text-red-500" />
             <Typography variant="h5" fontWeight="bold">
@@ -201,7 +201,7 @@ const ManageChannel = () => {
             </Typography>
           </Box>
 
-          {/* 🔹 Form */}
+         
           <form onSubmit={handleUpdateChannel} className="space-y-5">
             {/* Channel Name */}
             <TextField
@@ -222,7 +222,7 @@ const ManageChannel = () => {
               }}
             />
 
-            {/* Channel Description */}
+           
             <TextField
               fullWidth
               label="Channel Description"
@@ -243,7 +243,7 @@ const ManageChannel = () => {
               }}
             />
 
-            {/* Submit Button */}
+          
             <Button
               type="submit"
               fullWidth

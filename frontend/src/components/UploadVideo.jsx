@@ -56,7 +56,7 @@ const UploadVideo = () => {
 
       console.log("Video uploaded:", response.data);
 
-      // ✅ Show success animation for 1s, then redirect
+     
       setTimeout(() => {
         navigate("/channelmanager");
       }, 1000);
@@ -74,7 +74,7 @@ const UploadVideo = () => {
 
       <Card className="w-full max-w-2xl bg-black border border-gray-800 rounded-xl shadow-lg">
         <CardContent className="flex flex-col gap-4 bg-black">
-          {/* Video Upload */}
+       
           <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition-colors">
             <Upload size={48} className="text-red-500 mb-2" />
             <p className="text-gray-400 mb-2 text-center">
@@ -106,7 +106,7 @@ const UploadVideo = () => {
             )}
           </div>
 
-          {/* Video Preview */}
+       
           {videoFile && (
             <div className="bg-gray-900 p-4 rounded-lg">
               <video
@@ -117,7 +117,7 @@ const UploadVideo = () => {
             </div>
           )}
 
-          {/* Thumbnail Upload */}
+     
           <div className="border-2 border-dashed border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition-colors">
             <p className="text-gray-400 mb-2 text-center">Upload Thumbnail</p>
             <Button
@@ -155,7 +155,7 @@ const UploadVideo = () => {
             )}
           </div>
 
-          {/* Title & Description */}
+          
           <TextField
             label="Title"
             variant="outlined"
@@ -191,7 +191,7 @@ const UploadVideo = () => {
             }}
           />
 
-          {/* Visibility */}
+          
           <FormControl fullWidth>
             <InputLabel sx={{ color: "gray" }}>Visibility</InputLabel>
             <Select
@@ -216,7 +216,7 @@ const UploadVideo = () => {
             </Select>
           </FormControl>
 
-          {/* Upload Button */}
+         
           <Button
             variant="contained"
             disabled={uploading || !videoFile}
@@ -237,7 +237,7 @@ const UploadVideo = () => {
             {uploading ? "Uploading..." : "Upload Video"}
           </Button>
 
-          {/* Progress Bar */}
+         
           {uploading && (
             <Box className="mt-2 w-full">
               <LinearProgress
@@ -251,7 +251,7 @@ const UploadVideo = () => {
                 }}
               />
 
-              {/* Optional Spinner Overlay */}
+            
               <Box className="absolute inset-0 flex items-center justify-center">
                 <CircularProgress style={{ color: "red" }} />
               </Box>

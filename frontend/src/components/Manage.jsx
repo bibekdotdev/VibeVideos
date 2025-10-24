@@ -3,7 +3,7 @@ import React from "react";
 const Manage = () => {
   return (
     <div className="p-4">
-      {/* Filter Section */}
+     
       <div className="flex gap-3 overflow-x-auto scrollbar-hide mb-4">
         {["All", "Music", "Gaming", "Coding", "News", "Sports"].map(
           (cat, i) => (
@@ -17,7 +17,7 @@ const Manage = () => {
         )}
       </div>
 
-      {/* Upload Section */}
+     
       <div className="bg-white shadow rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-3">Upload a Video</h2>
         <form className="space-y-4">
@@ -40,7 +40,7 @@ const Manage = () => {
         </form>
       </div>
 
-      {/* Manage Videos (with 3-dot menu) */}
+    
       <div className="mt-6">
         <h3 className="font-semibold mb-2">Your Videos</h3>
         <div className="bg-gray-100 p-3 rounded-lg flex justify-between items-center">

@@ -209,7 +209,7 @@ const MyChannel = () => {
           </CardContent>
         </Card>
 
-        {/* Delete Confirmation Dialog */}
+        
         <Dialog open={openDeleteDialog} onClose={cancelDelete}>
           <DialogTitle>Delete Video</DialogTitle>
           <DialogContent>
@@ -230,7 +230,7 @@ const MyChannel = () => {
 
   return (
     <div className="w-full min-h-screen bg-black text-white flex flex-col items-center">
-      {/* Banner */}
+
       <div className="w-full relative">
         <img
           src={channel?.bannerUrl || ""}
@@ -264,7 +264,7 @@ const MyChannel = () => {
         </div>
       </div>
 
-      {/* Tabs + Buttons */}
+      
       <div className="w-full px-4 sm:px-6 md:px-10 mt-20 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <Tabs
           value={tab}
@@ -284,7 +284,6 @@ const MyChannel = () => {
           }}
         >
           <Tab label="Videos" />
-          <Tab label="Playlists" />
           <Tab label="About" />
         </Tabs>
 
@@ -342,13 +341,6 @@ const MyChannel = () => {
       )}
 
       {tab === 1 && (
-        <div className="w-full px-4 sm:px-6 md:px-10 mt-8 sm:mt-10 text-gray-400">
-          <h3 className="text-base sm:text-lg font-semibold mb-4">Playlists</h3>
-          <p className="text-sm">No playlists created yet.</p>
-        </div>
-      )}
-
-      {tab === 2 && (
         <div className="w-full px-4 sm:px-6 md:px-10 mt-8 sm:mt-10 text-gray-400">
           <h3 className="text-base sm:text-lg font-semibold mb-4">About</h3>
           <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed break-words line-clamp-4 md:line-clamp-none">
