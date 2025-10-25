@@ -6,7 +6,7 @@ import manageChannelStore from "../store/manageChannelStore";
 const Nav = () => {
   const { myChannel } = manageChannelStore();
   const [channelData, setChannelData] = useState(null);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchChannel = async () => {
@@ -20,7 +20,6 @@ const Nav = () => {
     fetchChannel();
   }, []);
 
-
   const handleRedirect = () => {
     if (channelData?._id) {
       navigate(`/channelmanager`);
@@ -29,12 +28,10 @@ const Nav = () => {
 
   return (
     <div className="flex items-center justify-between px-4 md:px-6 py-3 bg-black shadow-lg sticky top-0 z-50 border-b border-red-600/40">
-      
       <h1 className="text-xl md:text-2xl font-extrabold text-red-600 tracking-wide hover:scale-105 transition-transform cursor-pointer">
-        YouTube
+        VibeVideos
       </h1>
 
-      
       <div className="flex items-center gap-4">
         {channelData?.logoUrl ? (
           <img

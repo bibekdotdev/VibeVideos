@@ -5,7 +5,7 @@ import {
   Filter,
   MoreHorizontal,
   Users,
-  Bookmark, 
+  Bookmark,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useClerk } from "@clerk/clerk-react";
@@ -41,7 +41,7 @@ const Sidebar = () => {
       icon: <Users size={20} />,
     },
     {
-      name: "Saved Videos", 
+      name: "Saved Videos",
       path: "/saved",
       icon: <Bookmark size={20} />,
     },
@@ -49,10 +49,9 @@ const Sidebar = () => {
 
   return (
     <div className="w-56 p-4 border-r border-gray-800 bg-black shadow-lg h-screen flex flex-col justify-between">
-     
       <div>
         <h2 className="text-xl font-extrabold mb-6 text-red-500 tracking-wide">
-          MyTube
+          VibeVideos
         </h2>
 
         <ul className="space-y-2">
@@ -77,7 +76,6 @@ const Sidebar = () => {
         </ul>
       </div>
 
-    
       <button
         onClick={handleSignOut}
         className="bg-red-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-700 shadow-md hover:shadow-red-600/50 transition text-sm sm:text-base"
