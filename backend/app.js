@@ -39,13 +39,7 @@ app.use("/api/video", videoRoutes);
 
 // -------------------- FRONTEND SERVE --------------------
 // Serve static files from frontend folder
-const frontendPath = path.join(__dirname, "../frontend");
-app.use(express.static(frontendPath));
 
-// Fallback to index.html for React Router
-app.get("*", (req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
 
 // -------------------- START SERVER --------------------
 app.listen(PORT, () => {
