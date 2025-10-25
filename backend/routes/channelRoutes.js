@@ -98,7 +98,7 @@ router.put(
   async (req, res) => {
     try {
       const { name, desc } = req.body;
-
+      console.log("bibek jana is :",name,desc);
       const user = await User.findById(req.user.id);
       if (!user) {
         return res
