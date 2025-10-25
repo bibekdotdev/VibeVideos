@@ -4,7 +4,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
-// Import routes
+// Routes
 const Auth = require("./routes/auth");
 const videoRoutes = require("./routes/videoRoutes");
 const channelRouter = require("./routes/channelRoutes");
@@ -22,7 +22,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../frontend")));
+
 // -------------------- DATABASE CONNECTION --------------------
 const MONGO_URI =
   "mongodb+srv://bibekjana68_db_user:jTIQGt3lk6XIKUWy@cluster0.l3xjsqb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -38,12 +38,13 @@ app.use("/api/channel", channelRouter);
 app.use("/api/video", videoRoutes);
 
 // -------------------- FRONTEND SERVE --------------------
-// Serve static files from the frontend folder
+// Serve static files from frontend folder
+const frontendPath = path.join(__dirname, "../frontend");
+app.use(express.static(frontendPath));
 
-
-// Handle all other routes with React's index.html
+// Fallback to index.html for React Router
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend", "index.html"));
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 // -------------------- START SERVER --------------------
