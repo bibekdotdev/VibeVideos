@@ -30,7 +30,7 @@ router.post("/signin", async (req, res) => {
     );
 
     res.cookie("token", token, {
-    signed: true,
+  signed: true,
   httpOnly: true,
   secure: true, 
   sameSite: "none", 
@@ -54,8 +54,7 @@ router.post("/signout", (req, res) => {
 
    
     res.clearCookie("token", {
-     
-        signed: true,
+   signed: true,
   httpOnly: true,
   secure: true, 
   sameSite: "none", 
