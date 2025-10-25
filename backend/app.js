@@ -11,7 +11,7 @@ const channelRouter = require("./routes/channelRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-__dirname = path.resolve();
+
 
 // -------------------- MIDDLEWARES --------------------
 app.use(cookieParser());
@@ -39,11 +39,7 @@ app.use("/api/channel", channelRouter);
 app.use("/api/video", videoRoutes);
 
 // -------------------- FRONTEND SERVE (React Build) --------------------
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
-});
 
 // -------------------- START SERVER --------------------
 app.listen(PORT, () => {
