@@ -11,7 +11,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://vibevideos.onrender.com",
     credentials: true,
   })
 );
