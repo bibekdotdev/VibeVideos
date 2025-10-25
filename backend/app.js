@@ -2,7 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const path = require("path");
 
 // Routes
 const Auth = require("./routes/auth");
@@ -16,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ["https://vibevideos.onrender.com", "http://localhost:5173"],
+    origin: ["https://vibevideos.onrender.com", "http://localhost:5173"], // frontend URLs
     credentials: true,
   })
 );
@@ -37,11 +36,12 @@ app.use("/api/auth", Auth);
 app.use("/api/channel", channelRouter);
 app.use("/api/video", videoRoutes);
 
-// -------------------- FRONTEND SERVE --------------------
-// Serve static files from frontend folder
-
+// -------------------- HEALTH CHECK --------------------
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
 
 // -------------------- START SERVER --------------------
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
