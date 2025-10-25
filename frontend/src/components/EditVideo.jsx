@@ -32,7 +32,6 @@ const EditVideo = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState("");
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
     const fetchVideo = async () => {
       try {
@@ -122,7 +121,6 @@ const EditVideo = () => {
             </div>
           )}
 
-         
           {thumbnailPreview && (
             <div className="mt-4 flex flex-col items-center">
               <p className="text-sm text-gray-300 mb-1">Thumbnail Preview:</p>
@@ -134,7 +132,6 @@ const EditVideo = () => {
             </div>
           )}
 
-        
           <div className="mt-4 flex flex-col items-center">
             <div className="border-2 border-dashed border-gray-600 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer hover:border-red-500 transition-colors">
               <p className="text-gray-400 mb-2 text-center">Update Thumbnail</p>
@@ -160,7 +157,6 @@ const EditVideo = () => {
             </div>
           </div>
 
-          
           <TextField
             label="Title"
             variant="outlined"
@@ -178,7 +174,6 @@ const EditVideo = () => {
             }}
           />
 
-          
           <TextField
             label="Description"
             variant="outlined"
@@ -198,7 +193,6 @@ const EditVideo = () => {
             }}
           />
 
-       
           <FormControl fullWidth>
             <InputLabel sx={{ color: "gray" }}>Visibility</InputLabel>
             <Select
@@ -219,11 +213,9 @@ const EditVideo = () => {
             >
               <MenuItem value="public">Public</MenuItem>
               <MenuItem value="private">Private</MenuItem>
-              <MenuItem value="unlisted">Unlisted</MenuItem>
             </Select>
           </FormControl>
 
-       
           <Button
             variant="contained"
             disabled={uploading || !title}
@@ -253,7 +245,6 @@ const EditVideo = () => {
             )}
           </Button>
 
-         
           {uploading && (
             <LinearProgress
               variant="determinate"
