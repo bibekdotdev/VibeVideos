@@ -222,7 +222,7 @@ const ManageChannel = () => {
               }}
             />
 
-           
+           <br/><br/>
             <TextField
               fullWidth
               label="Channel Description"
