@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
-import { SignedIn, useUser } from "@clerk/clerk-react";
+import {
+  SignedIn,
+  SignedOut,
+  useUser,
+  RedirectToSignIn,
+} from "@clerk/clerk-react";
 import useAuthStore from "../store/authStore";
-import axios from "axios";
 
 export default function Authentication() {
   const { isSignedIn, user } = useUser();
   const { signupRequest } = useAuthStore();
   const [loading, setLoading] = useState(true);
+  const [signupComplete, setSignupComplete] = useState(false);
 
   useEffect(() => {
     const sendUserData = async () => {
@@ -21,6 +26,7 @@ export default function Authentication() {
 
           const res = await signupRequest(userData);
           console.log("✅ User synced to backend:", res.data);
+          setSignupComplete(true);
         } catch (err) {
           console.error("❌ Error sending user data:", err);
         } finally {
@@ -32,7 +38,7 @@ export default function Authentication() {
     };
 
     sendUserData();
-  }, [isSignedIn, user]);
+  }, [isSignedIn, user, signupRequest]);
 
   if (loading) {
     return (
@@ -45,9 +51,25 @@ export default function Authentication() {
     );
   }
 
+  if (!isSignedIn) {
+    return <RedirectToSignIn />;
+  }
+
+  if (signupComplete) {
+    return (
+      <header>
+        <SignedIn>
+          <p className="text-white">You are signed in!</p>
+        </SignedIn>
+      </header>
+    );
+  }
+
   return (
-    <header>
-      <SignedIn></SignedIn>
-    </header>
+    <div className="flex justify-center items-center h-screen bg-black text-white">
+      <p className="text-lg font-medium">
+        Failed to sync user. Please try again.
+      </p>
+    </div>
   );
 }
