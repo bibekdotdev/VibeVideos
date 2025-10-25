@@ -9,13 +9,13 @@ const videoRoutes = require("./routes/videoRoutes");
 const path = require("path");
 const channnelRouter = require("./routes/channelRoutes");
 app.use(cookieParser());
-
+const __dirname = path.resolve();
 app.use(cors({
   origin: "https://vibevideos.onrender.com", 
   credentials: true
 }));
 app.use(express.json());
-
+app.use(express.static(path.join(__dirname, "client", "dist")));
 app.use(express.urlencoded({ extended: true }));
 const MONGO_URI =
   "mongodb+srv://bibekjana68_db_user:jTIQGt3lk6XIKUWy@cluster0.l3xjsqb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -30,7 +30,9 @@ app.get("/", (req, res) => {
   res.send("Hello, Express + Mongoose is working!");
 });
 
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
