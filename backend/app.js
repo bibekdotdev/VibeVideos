@@ -22,7 +22,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.static(path.join(__dirname, "../frontend")));
 // -------------------- DATABASE CONNECTION --------------------
 const MONGO_URI =
   "mongodb+srv://bibekjana68_db_user:jTIQGt3lk6XIKUWy@cluster0.l3xjsqb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -39,7 +39,7 @@ app.use("/api/video", videoRoutes);
 
 // -------------------- FRONTEND SERVE --------------------
 // Serve static files from the frontend folder
-app.use(express.static(path.join(__dirname, "../frontend")));
+
 
 // Handle all other routes with React's index.html
 app.get("*", (req, res) => {
