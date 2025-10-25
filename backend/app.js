@@ -15,7 +15,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "client", "dist")));
+
 app.use(express.urlencoded({ extended: true }));
 const MONGO_URI =
   "mongodb+srv://bibekjana68_db_user:jTIQGt3lk6XIKUWy@cluster0.l3xjsqb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -29,7 +29,7 @@ app.use("/api/video", videoRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, Express + Mongoose is working!");
 });
-
+app.use(express.static(path.join(__dirname, "client", "dist")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
