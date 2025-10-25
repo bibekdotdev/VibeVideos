@@ -9,12 +9,10 @@ const videoRoutes = require("./routes/videoRoutes");
 const channnelRouter = require("./routes/channelRoutes");
 app.use(cookieParser());
 
-app.use(
-  cors({
-    origin: "https://vibevideos.onrender.com",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "https://vibevideos.onrender.com", 
+  credentials: true
+}));
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
