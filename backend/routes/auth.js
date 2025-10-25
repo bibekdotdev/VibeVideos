@@ -30,10 +30,11 @@ router.post("/signin", async (req, res) => {
     );
 
     res.cookie("token", token, {
-    
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+    signed: true,
+  httpOnly: true,
+  secure: true, 
+  sameSite: "none", 
+  maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({
@@ -54,8 +55,11 @@ router.post("/signout", (req, res) => {
    
     res.clearCookie("token", {
      
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+        signed: true,
+  httpOnly: true,
+  secure: true, 
+  sameSite: "none", 
+  maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.json({ message: "Signed out successfully" });
