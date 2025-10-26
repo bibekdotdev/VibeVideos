@@ -70,7 +70,7 @@ const VideoDetails = () => {
       await toggleSubscribe(channelId);
     } catch (err) {
       console.error("Subscription error:", err);
-      setSubscribed(subscribed); 
+      setSubscribed(subscribed);
       setSubCount((prev) => (subscribed ? prev + 1 : prev - 1));
     }
   };
@@ -146,12 +146,9 @@ const VideoDetails = () => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 px-4 sm:px-6 md:px-12 py-4 bg-black min-h-screen text-white relative">
-     
       <div className="flex-1 flex flex-col gap-6 bg-black">
-      
         <CustomVideoPlayer video={video} className="w-full" />
 
-        
         <div className="flex flex-col gap-1">
           <h1 className="text-sm sm:text-sm md:text-base font-bold break-words break-all whitespace-normal">
             {video.title}
@@ -161,7 +158,6 @@ const VideoDetails = () => {
           </p>
         </div>
 
-        
         <div className="flex flex-wrap gap-3 mt-3">
           <button
             onClick={() => handleReaction("like")}
@@ -185,7 +181,6 @@ const VideoDetails = () => {
             <ThumbsDown size={16} /> {video.dislikes ?? 0}
           </button>
 
-         
           <button
             onClick={handleSaveVideo}
             className={`flex items-center gap-1 px-3 py-2 rounded-full text-xs sm:text-sm md:text-sm font-medium ${
@@ -197,79 +192,10 @@ const VideoDetails = () => {
             <Bookmark size={16} />
             {isSaved ? "Saved" : "Save"}
           </button>
-
-       
-          <div className="relative">
-            <button
-              onClick={handleShareVideo}
-              className="flex items-center gap-1 px-3 py-2 rounded-full text-xs sm:text-sm md:text-sm font-medium bg-white/10 hover:bg-white/20 text-white"
-            >
-              <Share2 size={16} /> Share
-            </button>
-
-            {shareOpen && (
-              <div className="absolute mt-2 right-0 bg-gray-900 border border-gray-700 rounded-xl shadow-lg p-4 w-64 z-50 animate-fade-in">
-                <div className="flex justify-between items-center mb-3">
-                  <p className="text-sm font-semibold">Share this video</p>
-                  <button onClick={() => setShareOpen(false)}>
-                    <X size={16} className="text-gray-400 hover:text-white" />
-                  </button>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    onClick={handleCopyLink}
-                    className="flex flex-col items-center gap-1 text-gray-300 hover:text-white"
-                  >
-                    <Copy size={18} />
-                    <span className="text-xs">Copy</span>
-                  </button>
-
-                  <a
-                    href={`https://wa.me/?text=${encodeURIComponent(
-                      `${window.location.origin}/video/${video._id}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-1 text-gray-300 hover:text-green-500"
-                  >
-                    <Send size={18} />
-                    <span className="text-xs">WhatsApp</span>
-                  </a>
-
-                  <a
-                    href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                      `${window.location.origin}/video/${video._id}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-1 text-gray-300 hover:text-sky-400"
-                  >
-                    <Twitter size={18} />
-                    <span className="text-xs">Twitter</span>
-                  </a>
-
-                  <a
-                    href={`https://facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                      `${window.location.origin}/video/${video._id}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex flex-col items-center gap-1 text-gray-300 hover:text-blue-500"
-                  >
-                    <Facebook size={18} />
-                    <span className="text-xs">Facebook</span>
-                  </a>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
-       
         {channel && (
           <div className="mt-4 flex items-center gap-4 p-4 bg-gray-900 rounded-xl">
-          
             <img
               src={channel.logoUrl}
               alt={channel.name}
@@ -315,11 +241,9 @@ const VideoDetails = () => {
           </div>
         )}
 
-       
         <CommentSection videoId={video._id} />
       </div>
 
-     
       <RecommendedVideos videoId={video._id} />
     </div>
   );
