@@ -210,7 +210,16 @@ const MyChannel = () => {
         </Card>
 
         
-        <Dialog open={openDeleteDialog} onClose={cancelDelete}>
+         <Dialog
+          open={openDeleteDialog}
+          onClose={cancelDelete}
+          PaperProps={{
+            sx: {
+              backgroundColor: "#000", 
+              color: "#fff", 
+            },
+          }}
+        >
           <DialogTitle>Delete Video</DialogTitle>
           <DialogContent>
             Are you sure you want to delete <strong>{video.title}</strong>?
