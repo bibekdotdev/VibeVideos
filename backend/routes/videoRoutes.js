@@ -22,14 +22,33 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => {
-    if (file.fieldname === "video")
-      return { folder: "videos", resource_type: "video" };
-    if (file.fieldname === "thumbnail")
-      return { folder: "thumbnails", allowed_formats: ["jpg", "jpeg", "png"] };
+    if (file.fieldname === "video") {
+      return {
+        folder: "vibe_videos",
+        resource_type: "video",
+        eager: [
+          {
+            width: 1280,
+            height: 720,
+            crop: "fill",
+            format: "mp4",
+            quality: "auto",
+          },
+        ],
+        eager_async: true, // process in background
+      };
+    } else if (file.fieldname === "thumbnail") {
+      return {
+        folder: "vibe_videos/thumbnails",
+        resource_type: "image",
+      };
+    }
   },
 });
+
 const parser = multer({ storage });
 
+// Upload route
 router.post(
   "/upload",
   protectedRoute,
@@ -49,16 +68,27 @@ router.post(
       const user = await User.findById(req.user.id);
       if (!user) return res.status(404).json({ error: "User not found." });
 
+      // Store optimized Cloudinary URLs
+      const videoUrl =
+        req.files.video[0].eager && req.files.video[0].eager.length > 0
+          ? req.files.video[0].eager[0].secure_url
+          : req.files.video[0].path;
+
+      const thumbnailUrl = req.files.thumbnail
+        ? req.files.thumbnail[0].path
+        : "";
+
       const video = new Video({
         title: title.trim(),
         description: description?.trim() || "",
         visibility,
-        videoUrl: req.files.video[0].path,
-        thumbnailUrl: req.files.thumbnail ? req.files.thumbnail[0].path : "",
+        videoUrl,
+        thumbnailUrl,
         uploadedBy: user._id,
       });
 
       await video.save();
+
       res.status(201).json({ message: "Video uploaded!", video });
     } catch (err) {
       console.error(err);
@@ -68,7 +98,6 @@ router.post(
     }
   }
 );
-
 router.get("/myvideos", protectedRoute, async (req, res) => {
   try {
     const user = await User.findOne({
