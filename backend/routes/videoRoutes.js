@@ -35,7 +35,7 @@ const storage = new CloudinaryStorage({
             quality: "auto",
           },
         ],
-        eager_async: true, // process in background
+        eager_async: true, 
       };
     } else if (file.fieldname === "thumbnail") {
       return {
@@ -68,7 +68,7 @@ router.post(
       const user = await User.findById(req.user.id);
       if (!user) return res.status(404).json({ error: "User not found." });
 
-      // Store optimized Cloudinary URLs
+   
       const videoUrl =
         req.files.video[0].eager && req.files.video[0].eager.length > 0
           ? req.files.video[0].eager[0].secure_url
