@@ -19,7 +19,18 @@ const Nav = () => {
       }
     };
     fetchChannel();
-  }, [isSignin]);
+  }, [isSignin,  useEffect(() => {
+    const fetchChannel = async () => {
+      try {
+        const channeldata = await myChannel();
+        console.log(channeldata.channel);
+        setChannelData(channeldata.channel);
+      } catch (error) {
+        console.error("Error fetching channel:", error);
+      }
+    };
+    fetchChannel();
+  }, [isSignin, myChannel]);
 
   const handleRedirect = () => {
     if (channelData?._id) {
