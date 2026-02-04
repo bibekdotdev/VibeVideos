@@ -19,7 +19,7 @@ const Nav = () => {
       }
     };
     fetchChannel();
-  },[isSignin,myChannel]);
+  },[isSignin]);
 
   const handleRedirect = () => {
     if (channelData?._id) {
