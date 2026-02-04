@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const path = require("path");
+
 
 const Auth = require("./routes/auth");
 const videoRoutes = require("./routes/videoRoutes");
@@ -38,11 +38,7 @@ app.use("/api/video", videoRoutes);
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
-app.use(express.static(path.join(__dirname, "build")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
 
 // -------------------- START SERVER --------------------
 app.listen(PORT, () => {
