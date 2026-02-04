@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import manageChannelStore from "../store/manageChannelStore";
-
+import useAuthStore from "../store/authStore";
 const Nav = () => {
   const { myChannel } = manageChannelStore();
   const [channelData, setChannelData] = useState(null);
   const navigate = useNavigate();
-
+  const { issingin } = useAuthStore();
+  const isSignin = issingin();
   useEffect(() => {
     const fetchChannel = async () => {
       try {
@@ -18,7 +19,7 @@ const Nav = () => {
       }
     };
     fetchChannel();
-  }, []);
+  }, [isSignin]);
 
   const handleRedirect = () => {
     if (channelData?._id) {
